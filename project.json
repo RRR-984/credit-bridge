@@ -1,0 +1,27 @@
+{
+  "overview": "Credit Bridge is a professional fintech-style credit and collection management app for Indian shop owners, supporting multiple currencies, bilingual EN/HI, and now with LenDenClub-style transaction history and email notifications.",
+  "features": [
+    "Transaction history page with Dr/Cr cards, filters, sort, and CSV download",
+    "Email notifications for payment confirmation and daily due reminders",
+    "Customer email field for personalized notifications",
+    "LenDenClub-style transaction cards across all pages",
+    "Multi-currency support (INR, USD, AED, GBP)",
+    "Bilingual English and Hindi interface",
+    "Dark and light mode",
+    "PWA with offline support",
+    "Interest and fixed daily repayment tracking",
+    "Super admin panel with full control"
+  ],
+  "category": "fintech",
+  "tags": [
+    "credit-management",
+    "fintech",
+    "india",
+    "small-business",
+    "udhar",
+    "jama",
+    "pwa",
+    "bilingual"
+  ],
+  "last_updated": "2026-05-24T11:42:29.372Z"
+}

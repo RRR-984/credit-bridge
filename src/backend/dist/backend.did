@@ -1,0 +1,219 @@
+type UserProfile = 
+ record {
+   businessName: text;
+   country: text;
+   currency: text;
+   dateFormat: text;
+   language: text;
+   mobileNumber: text;
+   timezone: text;
+ };
+type UpdateUdharArgs = 
+ record {
+   amount: nat;
+   dailyAmount: opt float64;
+   description: text;
+   dueDate: opt Timestamp;
+   interestRate: opt float64;
+   loanDurationMonths: opt nat;
+   notes: text;
+   repaymentMode: opt RepaymentMode;
+   repaymentType: opt RepaymentType;
+   totalDays: opt nat;
+ };
+type UpdateJamaArgs = 
+ record {
+   amount: nat;
+   notes: text;
+   paymentType: PaymentType;
+ };
+type UpdateCustomerArgs = 
+ record {
+   address: text;
+   creditLimit: nat;
+   email: opt text;
+   mobileNumber: text;
+   name: text;
+   notes: text;
+ };
+type UdharView = 
+ record {
+   amount: nat;
+   createdAt: Timestamp;
+   customerId: CustomerId;
+   dailyAmount: opt float64;
+   dailyInstallment: opt float64;
+   description: text;
+   dueDate: opt Timestamp;
+   emiAmount: opt float64;
+   halfYearlyInstallment: opt float64;
+   id: UdharId;
+   interestRate: opt float64;
+   loanDurationMonths: opt nat;
+   monthlyInstallment: opt float64;
+   notes: text;
+   profitAmount: opt float64;
+   quarterlyInstallment: opt float64;
+   repaymentMode: opt RepaymentMode;
+   repaymentType: opt RepaymentType;
+   totalDays: opt nat;
+   totalInterest: opt float64;
+   totalPayable: opt float64;
+   totalToCollect: opt float64;
+ };
+type UdharId = nat;
+type TransactionKind = 
+ variant {
+   jama;
+   udhar;
+ };
+type TransactionEntry = 
+ record {
+   amount: nat;
+   createdAt: Timestamp;
+   customerId: CustomerId;
+   description: text;
+   id: nat;
+   kind: TransactionKind;
+ };
+type TopCustomer = 
+ record {
+   id: CustomerId;
+   name: text;
+   outstandingBalance: int;
+ };
+type Timestamp = int;
+type RepaymentType = 
+ variant {
+   fixedDaily;
+   interestLoan;
+   simple;
+ };
+type RepaymentMode = 
+ variant {
+   daily;
+   endOfTerm;
+   halfYearly;
+   monthly;
+   quarterly;
+ };
+type PaymentType = 
+ variant {
+   cash;
+   deposit;
+   online;
+ };
+type JamaView = 
+ record {
+   amount: nat;
+   createdAt: Timestamp;
+   customerId: CustomerId;
+   id: JamaId;
+   notes: text;
+   paymentType: PaymentType;
+ };
+type JamaId = nat;
+type DashboardStats = 
+ record {
+   overdueCustomerCount: nat;
+   pendingBalance: int;
+   todayCollection: nat;
+   top5CustomersByBalance: vec TopCustomer;
+   totalJama: nat;
+   totalUdhar: nat;
+ };
+type CustomerView = 
+ record {
+   address: text;
+   blocked: bool;
+   createdAt: Timestamp;
+   creditLimit: nat;
+   email: opt text;
+   id: CustomerId;
+   mobileNumber: text;
+   name: text;
+   notes: text;
+   outstandingBalance: int;
+   status: CustomerStatus;
+ };
+type CustomerStatus = 
+ variant {
+   active;
+   overdue;
+ };
+type CustomerId = nat;
+type CreateUdharArgs = 
+ record {
+   amount: nat;
+   customerId: CustomerId;
+   dailyAmount: opt float64;
+   description: text;
+   dueDate: opt Timestamp;
+   interestRate: opt float64;
+   loanDurationMonths: opt nat;
+   notes: text;
+   repaymentMode: opt RepaymentMode;
+   repaymentType: opt RepaymentType;
+   totalDays: opt nat;
+ };
+type CreateJamaArgs = 
+ record {
+   amount: nat;
+   customerId: CustomerId;
+   notes: text;
+   paymentType: PaymentType;
+ };
+type CreateCustomerArgs = 
+ record {
+   address: text;
+   creditLimit: nat;
+   email: opt text;
+   mobileNumber: text;
+   name: text;
+   notes: text;
+ };
+type AdminStats = 
+ record {
+   blockedCount: nat;
+   totalCustomers: nat;
+   totalJama: nat;
+   totalJamaAmount: float64;
+   totalUdhar: nat;
+   totalUdharAmount: float64;
+ };
+service : {
+  adminBlockCustomer: (id: CustomerId) -> (bool);
+  adminDeleteCustomer: (id: CustomerId) -> (bool);
+  adminDeleteJama: (id: JamaId) -> (bool);
+  adminDeleteUdhar: (id: UdharId) -> (bool);
+  adminGetAdminPrincipal: () -> (opt principal) query;
+  adminGetAllCustomers: () -> (vec CustomerView) query;
+  adminGetAllJama: () -> (vec JamaView) query;
+  adminGetAllUdhar: () -> (vec UdharView) query;
+  adminGetStats: () -> (AdminStats) query;
+  adminUnblockCustomer: (id: CustomerId) -> (bool);
+  adminUpdateCustomer: (id: CustomerId, args: UpdateCustomerArgs) ->
+   (opt CustomerView);
+  createCustomer: (args: CreateCustomerArgs) -> (CustomerView);
+  createJama: (args: CreateJamaArgs) -> (JamaView);
+  createUdhar: (args: CreateUdharArgs) -> (UdharView);
+  deleteCustomer: (id: CustomerId) -> (bool);
+  deleteJama: (id: JamaId) -> (bool);
+  deleteUdhar: (id: UdharId) -> (bool);
+  getCustomer: (id: CustomerId) -> (opt CustomerView) query;
+  getCustomers: () -> (vec CustomerView) query;
+  getDashboardStats: () -> (DashboardStats) query;
+  getDueTodayReminders: () -> (vec CustomerView) query;
+  getJamaByCustomer: (customerId: CustomerId) -> (vec JamaView) query;
+  getTransactionHistory: (customerId: CustomerId) ->
+   (vec TransactionEntry) query;
+  getUdharByCustomer: (customerId: CustomerId) -> (vec UdharView) query;
+  getUserProfile: () -> (UserProfile);
+  isAdmin: (p: principal) -> (bool) query;
+  setAdminPrincipal: (p: principal) -> ();
+  updateCustomer: (id: CustomerId, args: UpdateCustomerArgs) ->
+   (opt CustomerView);
+  updateJama: (id: JamaId, args: UpdateJamaArgs) -> (opt JamaView);
+  updateUdhar: (id: UdharId, args: UpdateUdharArgs) -> (opt UdharView);
+  updateUserProfile: (profile: UserProfile) -> ();
+}

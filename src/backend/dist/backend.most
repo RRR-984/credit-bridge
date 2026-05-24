@@ -1,0 +1,136 @@
+// Version: 3.0.0
+type CustomerId__1015005394 = Nat;
+type CustomerStatus__235234036 = {#active; #overdue};
+type Customer__192853522 =
+  {
+    var address : Text;
+    var blocked : Bool;
+    createdAt : Timestamp__301639476;
+    var creditLimit : Nat;
+    var email : ?Text;
+    id : CustomerId__1015005394;
+    var mobileNumber : Text;
+    var name : Text;
+    var notes : Text;
+    var outstandingBalance : Int;
+    owner : Principal;
+    var status : CustomerStatus__235234036
+  };
+type JamaId__533445461 = Nat;
+type Jama__237104277 =
+  {
+    var amount : Nat;
+    createdAt : Timestamp__301639476;
+    customerId : CustomerId__1015005394;
+    id : JamaId__533445461;
+    var notes : Text;
+    owner : Principal;
+    var paymentType : PaymentType__668863806
+  };
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type OldCustomer__268643839 =
+  {
+    var address : Text;
+    var blocked : Bool;
+    createdAt : Int;
+    var creditLimit : Nat;
+    id : Nat;
+    var mobileNumber : Text;
+    var name : Text;
+    var notes : Text;
+    var outstandingBalance : Int;
+    owner : Principal;
+    var status : {#active; #overdue}
+  };
+type PaymentType__668863806 = {#cash; #deposit; #online};
+type RepaymentMode__782063814 =
+  {#daily; #endOfTerm; #halfYearly; #monthly; #quarterly};
+type RepaymentType__346275137 = {#fixedDaily; #interestLoan; #simple};
+type Timestamp__301639476 = Int;
+type UdharId__18967099 = Nat;
+type Udhar__273147258 =
+  {
+    var amount : Nat;
+    createdAt : Timestamp__301639476;
+    customerId : CustomerId__1015005394;
+    var dailyAmount : ?Float;
+    var dailyInstallment : ?Float;
+    var description : Text;
+    var dueDate : ?Timestamp__301639476;
+    var emiAmount : ?Float;
+    var halfYearlyInstallment : ?Float;
+    id : UdharId__18967099;
+    var interestRate : ?Float;
+    var loanDurationMonths : ?Nat;
+    var monthlyInstallment : ?Float;
+    var notes : Text;
+    owner : Principal;
+    var profitAmount : ?Float;
+    var quarterlyInstallment : ?Float;
+    var repaymentMode : ?RepaymentMode__782063814;
+    var repaymentType : ?RepaymentType__346275137;
+    var totalDays : ?Nat;
+    var totalInterest : ?Float;
+    var totalPayable : ?Float;
+    var totalToCollect : ?Float
+  };
+type UserProfile__446616884 =
+  {
+    businessName : Text;
+    country : Text;
+    currency : Text;
+    dateFormat : Text;
+    language : Text;
+    mobileNumber : Text;
+    timezone : Text
+  };
+actor ({
+  stable adminState : {var adminPrincipal : ?Principal};
+  in customers : List__415060402<OldCustomer__268643839>;
+  stable jamaList :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Jama__237104277]];
+      var elementIndex : Nat__490723111
+    };
+  stable profileState : {var profile : UserProfile__446616884};
+  stable state :
+    {var nextCustomerId : Nat; var nextJamaId : Nat; var nextUdharId : Nat};
+  stable udharList :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Udhar__273147258]];
+      var elementIndex : Nat__490723111
+    }
+}, {
+  stable adminState : {var adminPrincipal : ?Principal};
+  stable customers :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Customer__192853522]];
+      var elementIndex : Nat__490723111
+    };
+  stable jamaList :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Jama__237104277]];
+      var elementIndex : Nat__490723111
+    };
+  stable profileState : {var profile : UserProfile__446616884};
+  stable state :
+    {var nextCustomerId : Nat; var nextJamaId : Nat; var nextUdharId : Nat};
+  stable udharList :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Udhar__273147258]];
+      var elementIndex : Nat__490723111
+    }
+});

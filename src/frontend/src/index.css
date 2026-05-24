@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-display: "Space Grotesk";
+    --font-body: "General Sans";
+    --font-mono: monospace;
+    --radius: 0.625rem;
+
+    --background: 0.97 0.006 210;
+    --foreground: 0.15 0.03 245;
+    --card: 1.0 0 0;
+    --card-foreground: 0.15 0.03 245;
+    --popover: 1.0 0 0;
+    --popover-foreground: 0.15 0.03 245;
+
+    --primary: 0.72 0.15 195;
+    --primary-foreground: 1.0 0 0;
+
+    --secondary: 0.94 0.012 210;
+    --secondary-foreground: 0.25 0.04 245;
+    --muted: 0.92 0.01 210;
+    --muted-foreground: 0.45 0.04 245;
+
+    --accent: 0.72 0.15 195;
+    --accent-foreground: 1.0 0 0;
+
+    --destructive: 0.58 0.22 10;
+    --destructive-foreground: 0.98 0.005 10;
+
+    --border: 0.88 0.04 195;
+    --input: 0.94 0.012 210;
+    --ring: 0.72 0.15 195;
+
+    --chart-1: 0.72 0.15 195;
+    --chart-2: 0.65 0.18 200;
+    --chart-3: 0.58 0.22 10;
+    --chart-4: 0.62 0.18 220;
+    --chart-5: 0.75 0.18 170;
+
+    --sidebar: 1.0 0 0;
+    --sidebar-foreground: 0.15 0.03 245;
+    --sidebar-primary: 0.72 0.15 195;
+    --sidebar-primary-foreground: 1.0 0 0;
+    --sidebar-accent: 0.94 0.012 210;
+    --sidebar-accent-foreground: 0.25 0.04 245;
+    --sidebar-border: 0.88 0.04 195;
+    --sidebar-ring: 0.72 0.15 195;
+
+    --transaction-dr: 0.58 0.22 10;
+    --transaction-cr: 0.62 0.2 160;
+    --transaction-success: 0.62 0.2 160;
+    --transaction-processing: 0.72 0.18 50;
+    --transaction-failed: 0.58 0.22 10;
+    --transaction-border-width: 4px;
+  }
+
+  .dark {
+    --background: 0.11 0.04 250;
+    --foreground: 0.92 0.01 245;
+    --card: 0.16 0.025 245;
+    --card-foreground: 0.92 0.01 245;
+    --popover: 0.16 0.025 245;
+    --popover-foreground: 0.92 0.01 245;
+
+    --primary: 0.62 0.22 195;
+    --primary-foreground: 0.98 0.005 195;
+
+    --secondary: 0.2 0.022 245;
+    --secondary-foreground: 0.88 0.01 245;
+    --muted: 0.22 0.02 245;
+    --muted-foreground: 0.58 0.012 245;
+
+    --accent: 0.72 0.2 195;
+    --accent-foreground: 0.98 0.005 195;
+
+    --destructive: 0.58 0.22 10;
+    --destructive-foreground: 0.98 0.005 10;
+
+    --border: 0.22 0.025 245;
+    --input: 0.2 0.022 245;
+    --ring: 0.62 0.22 195;
+
+    --chart-1: 0.62 0.22 195;
+    --chart-2: 0.72 0.2 195;
+    --chart-3: 0.58 0.22 10;
+    --chart-4: 0.68 0.18 200;
+    --chart-5: 0.75 0.18 170;
+
+    --sidebar: 0.16 0.025 245;
+    --sidebar-foreground: 0.92 0.01 245;
+    --sidebar-primary: 0.62 0.22 195;
+    --sidebar-primary-foreground: 0.98 0.005 195;
+    --sidebar-accent: 0.22 0.02 245;
+    --sidebar-accent-foreground: 0.88 0.01 245;
+    --sidebar-border: 0.22 0.025 245;
+    --sidebar-ring: 0.62 0.22 195;
+
+    --transaction-dr: 0.68 0.25 10;
+    --transaction-cr: 0.72 0.22 160;
+    --transaction-success: 0.72 0.22 160;
+    --transaction-processing: 0.78 0.22 50;
+    --transaction-failed: 0.68 0.25 10;
+  }
+
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transaction-card {
+    @apply glass-md border-l-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.01] cursor-pointer relative overflow-hidden;
+  }
+
+  .transaction-card-dr {
+    @apply border-l-red-500 dark:border-l-[oklch(var(--transaction-dr))];
+  }
+
+  .transaction-card-cr {
+    @apply border-l-emerald-500 dark:border-l-[oklch(var(--transaction-cr))];
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors;
+  }
+
+  .status-badge-success {
+    @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300;
+  }
+
+  .status-badge-processing {
+    @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300;
+  }
+
+  .status-badge-failed {
+    @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300;
+  }
+
+  .transaction-list {
+    @apply space-y-3 sm:space-y-4 p-4 sm:p-6;
+  }
+}
+
+/* Light mode: frosted white glass with soft teal borders */
+.glass-card {
+  background: oklch(1.0 0 0 / 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid oklch(0.88 0.05 195 / 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px oklch(0.72 0.15 195 / 0.1), 0 1px 4px
+    oklch(0 0 0 / 0.06);
+}
+
+.glass-sm {
+  background: oklch(1.0 0 0 / 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.88 0.05 195 / 0.35);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px oklch(0.72 0.15 195 / 0.08), 0 1px 3px
+    oklch(0 0 0 / 0.05);
+}
+
+.glass-md {
+  background: oklch(1.0 0 0 / 0.82);
+  backdrop-filter: blur(16px);
+  border: 1px solid oklch(0.88 0.05 195 / 0.45);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px oklch(0.72 0.15 195 / 0.12), 0 2px 6px
+    oklch(0 0 0 / 0.06);
+}
+
+/* Dark mode overrides for glass utilities */
+.dark .glass-card {
+  background: oklch(0.16 0.025 245 / 0.8);
+  border: 1px solid oklch(0.22 0.025 245 / 0.3);
+  box-shadow: 0 8px 32px oklch(0.62 0.22 195 / 0.12);
+}
+
+.dark .glass-sm {
+  background: oklch(0.16 0.025 245 / 0.6);
+  border: 1px solid oklch(0.22 0.025 245 / 0.2);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.2);
+}
+
+.dark .glass-md {
+  background: oklch(0.16 0.025 245 / 0.75);
+  border: 1px solid oklch(0.22 0.025 245 / 0.25);
+  box-shadow: 0 8px 24px oklch(0.62 0.22 195 / 0.15);
+}
+
+.glow-blue {
+  box-shadow: 0 0 28px oklch(0.72 0.15 195 / 0.25), 0 4px 16px
+    oklch(0.72 0.15 195 / 0.12);
+}
+
+.dark .glow-blue {
+  box-shadow: 0 0 32px oklch(0.62 0.22 195 / 0.3), 0 8px 16px
+    oklch(0.62 0.22 195 / 0.15);
+}
+
+.glow-success {
+  box-shadow: 0 0 28px oklch(0.72 0.2 160 / 0.18), 0 4px 12px
+    oklch(0.72 0.2 160 / 0.08);
+}
+
+.glow-destructive {
+  box-shadow: 0 0 28px oklch(0.58 0.22 10 / 0.16), 0 4px 10px
+    oklch(0.58 0.22 10 / 0.06);
+}
