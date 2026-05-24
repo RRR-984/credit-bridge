@@ -156,7 +156,37 @@ export type TranslationKey =
   | "transactionId"
   | "noTransactions"
   | "emailAddress"
-  | "emailNotifications";
+  | "emailNotifications"
+  | "customerPortal"
+  | "myAccount"
+  | "linkAccount"
+  | "submitPayment"
+  | "paymentRequests"
+  | "pendingApprovals"
+  | "submitPaymentRequest"
+  | "paymentSubmitted"
+  | "approvePayment"
+  | "rejectPayment"
+  | "approvalPending"
+  | "paymentApproved"
+  | "paymentRejected"
+  | "enterCustomerId"
+  | "linkMyAccount"
+  | "accountLinked"
+  | "accountNotFound"
+  | "amountLabel"
+  | "paymentTypeLabel"
+  | "cashPayment"
+  | "onlinePayment"
+  | "depositPayment"
+  | "totalCredits"
+  | "totalPaymentsMade"
+  | "noPaymentRequests"
+  | "noPendingApprovals"
+  | "pendingApprovalAlert"
+  | "viewPendingApprovals"
+  | "allRequests"
+  | "rejectionReason";
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -319,6 +349,36 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     noTransactions: "No transactions found",
     emailAddress: "Email Address",
     emailNotifications: "Email Notifications",
+    customerPortal: "Customer Portal",
+    myAccount: "My Account",
+    linkAccount: "Link Account",
+    submitPayment: "Submit Payment",
+    paymentRequests: "Payment Requests",
+    pendingApprovals: "Pending Approvals",
+    submitPaymentRequest: "Submit Payment Request",
+    paymentSubmitted: "Payment submitted — awaiting shop owner approval",
+    approvePayment: "Approve",
+    rejectPayment: "Reject",
+    approvalPending: "Pending",
+    paymentApproved: "Approved",
+    paymentRejected: "Rejected",
+    enterCustomerId: "Enter Customer ID",
+    linkMyAccount: "Link My Account",
+    accountLinked: "Account linked successfully",
+    accountNotFound: "Account not found. Please check your details.",
+    amountLabel: "Amount",
+    paymentTypeLabel: "Payment Type",
+    cashPayment: "Cash",
+    onlinePayment: "Online",
+    depositPayment: "Deposit",
+    totalCredits: "Total Credits",
+    totalPaymentsMade: "Total Payments Made",
+    noPaymentRequests: "No payment requests yet",
+    noPendingApprovals: "No pending approvals",
+    pendingApprovalAlert: "You have pending payment requests to review",
+    viewPendingApprovals: "View Pending Approvals",
+    allRequests: "All Requests",
+    rejectionReason: "Rejection Reason",
   },
   hi: {
     totalCredit: "कुल उधार",
@@ -477,6 +537,36 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     noTransactions: "कोई लेनदेन नहीं मिला",
     emailAddress: "ईमेल पता",
     emailNotifications: "ईमेल सूचनाएं",
+    customerPortal: "ग्राहक पोर्टल",
+    myAccount: "मेरा खाता",
+    linkAccount: "खाता लिंक करें",
+    submitPayment: "भुगतान जमा करें",
+    paymentRequests: "भुगतान अनुरोध",
+    pendingApprovals: "लंबित अनुमोदन",
+    submitPaymentRequest: "भुगतान अनुरोध जमा करें",
+    paymentSubmitted: "भुगतान जमा किया गया — दुकान मालिक की स्वीकृति का इंतजार है",
+    approvePayment: "स्वीकृत करें",
+    rejectPayment: "अस्वीकार करें",
+    approvalPending: "लंबित",
+    paymentApproved: "स्वीकृत",
+    paymentRejected: "अस्वीकृत",
+    enterCustomerId: "ग्राहक आईडी दर्ज करें",
+    linkMyAccount: "मेरा खाता लिंक करें",
+    accountLinked: "खाता सफलतापूर्वक लिंक हो गया",
+    accountNotFound: "खाता नहीं मिला। कृपया अपना विवरण जांचें।",
+    amountLabel: "राशि",
+    paymentTypeLabel: "भुगतान प्रकार",
+    cashPayment: "नकद",
+    onlinePayment: "ऑनलाइन",
+    depositPayment: "जमा",
+    totalCredits: "कुल उधार",
+    totalPaymentsMade: "कुल भुगतान",
+    noPaymentRequests: "अभी कोई भुगतान अनुरोध नहीं",
+    noPendingApprovals: "कोई लंबित अनुमोदन नहीं",
+    pendingApprovalAlert: "आपके पास समीक्षा के लिए लंबित भुगतान अनुरोध हैं",
+    viewPendingApprovals: "लंबित अनुमोदन देखें",
+    allRequests: "सभी अनुरोध",
+    rejectionReason: "अस्वीकृति का कारण",
   },
 };
 

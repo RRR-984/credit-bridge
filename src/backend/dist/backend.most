@@ -1,5 +1,26 @@
-// Version: 3.0.0
+// Version: 1.0.0
 type CustomerId__1015005394 = Nat;
+type CustomerLinkRecord__88817620 =
+  {
+    customerId : CustomerId__1015005394;
+    linkedAt : Timestamp__301639476;
+    linkedPrincipal : Principal;
+    mobileNumber : Text
+  };
+type CustomerPaymentRequest__273732524 =
+  {
+    var amount : Nat;
+    createdAt : Timestamp__301639476;
+    customerId : CustomerId__1015005394;
+    customerPrincipal : Principal;
+    id : Nat;
+    var notes : Text;
+    var paymentType : PaymentType__668863806;
+    var rejectionReason : ?Text;
+    var resolvedAt : ?Timestamp__301639476;
+    shopOwnerPrincipal : Principal;
+    var status : PaymentRequestStatus__554684227
+  };
 type CustomerStatus__235234036 = {#active; #overdue};
 type Customer__192853522 =
   {
@@ -27,29 +48,9 @@ type Jama__237104277 =
     owner : Principal;
     var paymentType : PaymentType__668863806
   };
-type List__415060402<T> = List__790383201<T>;
-type List__790383201<T> =
-  {
-    var blockIndex : Nat__490723111;
-    var blocks : [var [var ?T]];
-    var elementIndex : Nat__490723111
-  };
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
-type OldCustomer__268643839 =
-  {
-    var address : Text;
-    var blocked : Bool;
-    createdAt : Int;
-    var creditLimit : Nat;
-    id : Nat;
-    var mobileNumber : Text;
-    var name : Text;
-    var notes : Text;
-    var outstandingBalance : Int;
-    owner : Principal;
-    var status : {#active; #overdue}
-  };
+type PaymentRequestStatus__554684227 = {#approved; #pending; #rejected};
 type PaymentType__668863806 = {#cash; #deposit; #online};
 type RepaymentMode__782063814 =
   {#daily; #endOfTerm; #halfYearly; #monthly; #quarterly};
@@ -92,26 +93,14 @@ type UserProfile__446616884 =
     mobileNumber : Text;
     timezone : Text
   };
-actor ({
+actor {
   stable adminState : {var adminPrincipal : ?Principal};
-  in customers : List__415060402<OldCustomer__268643839>;
-  stable jamaList :
+  stable customerLinks :
     {
       var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Jama__237104277]];
+      var blocks : [var [var ?CustomerLinkRecord__88817620]];
       var elementIndex : Nat__490723111
     };
-  stable profileState : {var profile : UserProfile__446616884};
-  stable state :
-    {var nextCustomerId : Nat; var nextJamaId : Nat; var nextUdharId : Nat};
-  stable udharList :
-    {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Udhar__273147258]];
-      var elementIndex : Nat__490723111
-    }
-}, {
-  stable adminState : {var adminPrincipal : ?Principal};
   stable customers :
     {
       var blockIndex : Nat__490723111;
@@ -124,6 +113,13 @@ actor ({
       var blocks : [var [var ?Jama__237104277]];
       var elementIndex : Nat__490723111
     };
+  stable paymentRequests :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?CustomerPaymentRequest__273732524]];
+      var elementIndex : Nat__490723111
+    };
+  stable paymentState : {var nextPaymentId : Nat};
   stable profileState : {var profile : UserProfile__446616884};
   stable state :
     {var nextCustomerId : Nat; var nextJamaId : Nat; var nextUdharId : Nat};
@@ -133,4 +129,4 @@ actor ({
       var blocks : [var [var ?Udhar__273147258]];
       var elementIndex : Nat__490723111
     }
-});
+};

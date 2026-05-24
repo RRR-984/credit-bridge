@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  Clock,
   LayoutDashboard,
   List,
   LogOut,
@@ -13,11 +14,13 @@ import {
   Settings,
   Shield,
   Sun,
+  UserCircle,
   Users,
   X,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { type ReactNode, useState } from "react";
+import { useOwnerGetPendingPaymentRequests } from "../hooks/useBackend";
 import { InstallPrompt } from "./InstallPrompt";
 
 const NAV_ITEMS = [
@@ -49,6 +52,20 @@ const NAV_ITEMS = [
     icon: Settings,
     ocid: "nav.settings_link",
   },
+  {
+    to: "/customer-portal",
+    label: "Customer Portal",
+    labelHi: "ग्राहक पोर्टल",
+    icon: UserCircle,
+    ocid: "nav.customer_portal_link",
+  },
+  {
+    to: "/pending-approvals",
+    label: "Pending Approvals",
+    labelHi: "लंबित अनुमोदन",
+    icon: Clock,
+    ocid: "nav.pending_approvals_link",
+  },
 ];
 
 const ADMIN_NAV_ITEM = {
@@ -71,6 +88,7 @@ export function Layout({ children, title }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouterState();
   const currentPath = router.location.pathname;
+  const { data: pendingRequests } = useOwnerGetPendingPaymentRequests();
 
   const isHindi = language === "hi";
   const navLabel = (item: (typeof NAV_ITEMS)[0]) =>
@@ -170,6 +188,13 @@ export function Layout({ children, title }: LayoutProps) {
                   {navLabel(
                     allNavItems.find((n) => n.to === to) ?? allNavItems[0],
                   )}
+                  {to === "/pending-approvals" &&
+                    pendingRequests &&
+                    pendingRequests.length > 0 && (
+                      <span className="ml-auto bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                        {pendingRequests.length}
+                      </span>
+                    )}
                 </Link>
               </motion.div>
             );
@@ -409,6 +434,13 @@ export function Layout({ children, title }: LayoutProps) {
                   >
                     <Icon size={18} />
                     {navLabel(item)}
+                    {to === "/pending-approvals" &&
+                      pendingRequests &&
+                      pendingRequests.length > 0 && (
+                        <span className="ml-auto bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                          {pendingRequests.length}
+                        </span>
+                      )}
                   </Link>
                 );
               })}
@@ -493,6 +525,13 @@ export function Layout({ children, title }: LayoutProps) {
                         }}
                       />
                     )}
+                    {to === "/pending-approvals" &&
+                      pendingRequests &&
+                      pendingRequests.length > 0 && (
+                        <span className="absolute -top-1 -right-1.5 bg-amber-500 text-white text-[9px] font-bold rounded-full px-1 py-0.5 min-w-[14px] text-center leading-none">
+                          {pendingRequests.length}
+                        </span>
+                      )}
                   </div>
                   <span>{navLabel(item)}</span>
                 </Link>

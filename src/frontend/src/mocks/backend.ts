@@ -339,4 +339,53 @@ export const mockBackend: backendInterface = {
   setAdminPrincipal: async () => {},
 
   isAdmin: async () => false,
+
+  getMyCustomerProfile: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  getMyOutstandingBalance: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  getMyPaymentRequests: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  getMyPendingPaymentRequests: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  getMyTransactionHistory: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  linkMyAccount: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  submitPaymentRequest: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  ownerGetAllPaymentRequests: async () => [],
+
+  ownerGetPendingPaymentRequests: async () => [],
+
+  ownerApprovePaymentRequest: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
+
+  ownerRejectPaymentRequest: async () => ({
+    __kind__: "err",
+    err: "Not linked",
+  }),
 };

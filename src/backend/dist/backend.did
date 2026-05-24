@@ -83,6 +83,36 @@ type TopCustomer =
    outstandingBalance: int;
  };
 type Timestamp = int;
+type Result_5 = 
+ variant {
+   err: text;
+   ok: CustomerView;
+ };
+type Result_4 = 
+ variant {
+   err: text;
+   ok: int;
+ };
+type Result_3 = 
+ variant {
+   err: text;
+   ok: vec CustomerPaymentRequestView;
+ };
+type Result_2 = 
+ variant {
+   err: text;
+   ok: vec TransactionEntry;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: text;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: CustomerPaymentRequestView;
+ };
 type RepaymentType = 
  variant {
    fixedDaily;
@@ -102,6 +132,12 @@ type PaymentType =
    cash;
    deposit;
    online;
+ };
+type PaymentRequestStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
  };
 type JamaView = 
  record {
@@ -140,6 +176,20 @@ type CustomerStatus =
  variant {
    active;
    overdue;
+ };
+type CustomerPaymentRequestView = 
+ record {
+   amount: nat;
+   createdAt: Timestamp;
+   customerId: CustomerId;
+   customerPrincipal: principal;
+   id: nat;
+   notes: text;
+   paymentType: PaymentType;
+   rejectionReason: opt text;
+   resolvedAt: opt Timestamp;
+   shopOwnerPrincipal: principal;
+   status: PaymentRequestStatus;
  };
 type CustomerId = nat;
 type CreateUdharArgs = 
@@ -205,12 +255,25 @@ service : {
   getDashboardStats: () -> (DashboardStats) query;
   getDueTodayReminders: () -> (vec CustomerView) query;
   getJamaByCustomer: (customerId: CustomerId) -> (vec JamaView) query;
+  getMyCustomerProfile: () -> (Result_5) query;
+  getMyOutstandingBalance: () -> (Result_4) query;
+  getMyPaymentRequests: () -> (Result_3) query;
+  getMyPendingPaymentRequests: () -> (Result_3) query;
+  getMyTransactionHistory: () -> (Result_2) query;
   getTransactionHistory: (customerId: CustomerId) ->
    (vec TransactionEntry) query;
   getUdharByCustomer: (customerId: CustomerId) -> (vec UdharView) query;
   getUserProfile: () -> (UserProfile);
   isAdmin: (p: principal) -> (bool) query;
+  linkMyAccount: (customerId: nat, mobileNumber: text) -> (Result_1);
+  ownerApprovePaymentRequest: (requestId: nat) -> (Result_1);
+  ownerGetAllPaymentRequests: () -> (vec CustomerPaymentRequestView) query;
+  ownerGetPendingPaymentRequests: () ->
+   (vec CustomerPaymentRequestView) query;
+  ownerRejectPaymentRequest: (requestId: nat, reason: text) -> (Result_1);
   setAdminPrincipal: (p: principal) -> ();
+  submitPaymentRequest: (amount: nat, paymentType: PaymentType, notes:
+   text) -> (Result);
   updateCustomer: (id: CustomerId, args: UpdateCustomerArgs) ->
    (opt CustomerView);
   updateJama: (id: JamaId, args: UpdateJamaArgs) -> (opt JamaView);

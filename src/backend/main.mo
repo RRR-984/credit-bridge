@@ -10,13 +10,15 @@ import DashboardApi "mixins/dashboard-api";
 import ProfileLib "lib/profile";
 import ProfileApi "mixins/profile-api";
 import AdminApi "mixins/admin-api";
-import Migration "migration";
+import CPTypes "types/customer-payment";
+import CustomerPaymentApi "mixins/customer-payment-api";
 
 
 
 
 
-(with migration = Migration.run)
+
+
 actor {
   // --- Stable state ---
   let customers = List.empty<CustomerTypes.Customer>();
@@ -29,6 +31,9 @@ actor {
   };
   let profileState = ProfileLib.newState();
   let adminState = AdminTypes.newState();
+  let paymentRequests = List.empty<CPTypes.CustomerPaymentRequest>();
+  let customerLinks = List.empty<CPTypes.CustomerLinkRecord>();
+  let paymentState = CPTypes.newState();
 
   // --- Mixin composition ---
   include CustomerApi(customers, udharList, jamaList, state);
@@ -37,5 +42,6 @@ actor {
   include DashboardApi(customers, udharList, jamaList);
   include ProfileApi(profileState);
   include AdminApi(adminState, customers, udharList, jamaList);
+  include CustomerPaymentApi(customers, udharList, jamaList, paymentRequests, customerLinks, state, paymentState);
 };
 

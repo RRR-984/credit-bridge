@@ -24,6 +24,8 @@ const AdminTransactionsPage = lazy(
   () => import("@/pages/AdminTransactionsPage"),
 );
 const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"));
+const CustomerPortalPage = lazy(() => import("@/pages/CustomerPortalPage"));
+const PendingApprovalsPage = lazy(() => import("@/pages/PendingApprovalsPage"));
 
 const PageLoader = () => (
   <div className="flex min-h-[60vh] items-center justify-center">
@@ -171,6 +173,30 @@ const adminTransactionsRoute = createRoute({
   ),
 });
 
+const customerPortalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/customer-portal",
+  component: () => (
+    <ProtectedRoute>
+      <Suspense fallback={<PageLoader />}>
+        <CustomerPortalPage />
+      </Suspense>
+    </ProtectedRoute>
+  ),
+});
+
+const pendingApprovalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pending-approvals",
+  component: () => (
+    <ProtectedRoute>
+      <Suspense fallback={<PageLoader />}>
+        <PendingApprovalsPage />
+      </Suspense>
+    </ProtectedRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   dashboardRoute,
@@ -180,6 +206,8 @@ const routeTree = rootRoute.addChildren([
   jamaNewRoute,
   transactionsRoute,
   settingsRoute,
+  customerPortalRoute,
+  pendingApprovalsRoute,
   adminSetupRoute,
   adminDashboardRoute,
   adminCustomersRoute,

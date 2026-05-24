@@ -46,6 +46,19 @@ export interface CreateUdharArgs {
   'amount' : bigint,
 }
 export type CustomerId = bigint;
+export interface CustomerPaymentRequestView {
+  'id' : bigint,
+  'status' : PaymentRequestStatus,
+  'customerPrincipal' : Principal,
+  'createdAt' : Timestamp,
+  'rejectionReason' : [] | [string],
+  'notes' : string,
+  'paymentType' : PaymentType,
+  'customerId' : CustomerId,
+  'amount' : bigint,
+  'shopOwnerPrincipal' : Principal,
+  'resolvedAt' : [] | [Timestamp],
+}
 export type CustomerStatus = { 'active' : null } |
   { 'overdue' : null };
 export interface CustomerView {
@@ -78,6 +91,9 @@ export interface JamaView {
   'customerId' : CustomerId,
   'amount' : bigint,
 }
+export type PaymentRequestStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
 export type PaymentType = { 'cash' : null } |
   { 'deposit' : null } |
   { 'online' : null };
@@ -89,6 +105,18 @@ export type RepaymentMode = { 'endOfTerm' : null } |
 export type RepaymentType = { 'interestLoan' : null } |
   { 'simple' : null } |
   { 'fixedDaily' : null };
+export type Result = { 'ok' : CustomerPaymentRequestView } |
+  { 'err' : string };
+export type Result_1 = { 'ok' : string } |
+  { 'err' : string };
+export type Result_2 = { 'ok' : Array<TransactionEntry> } |
+  { 'err' : string };
+export type Result_3 = { 'ok' : Array<CustomerPaymentRequestView> } |
+  { 'err' : string };
+export type Result_4 = { 'ok' : bigint } |
+  { 'err' : string };
+export type Result_5 = { 'ok' : CustomerView } |
+  { 'err' : string };
 export type Timestamp = bigint;
 export interface TopCustomer {
   'id' : CustomerId,
@@ -190,11 +218,28 @@ export interface _SERVICE {
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
   'getDueTodayReminders' : ActorMethod<[], Array<CustomerView>>,
   'getJamaByCustomer' : ActorMethod<[CustomerId], Array<JamaView>>,
+  'getMyCustomerProfile' : ActorMethod<[], Result_5>,
+  'getMyOutstandingBalance' : ActorMethod<[], Result_4>,
+  'getMyPaymentRequests' : ActorMethod<[], Result_3>,
+  'getMyPendingPaymentRequests' : ActorMethod<[], Result_3>,
+  'getMyTransactionHistory' : ActorMethod<[], Result_2>,
   'getTransactionHistory' : ActorMethod<[CustomerId], Array<TransactionEntry>>,
   'getUdharByCustomer' : ActorMethod<[CustomerId], Array<UdharView>>,
   'getUserProfile' : ActorMethod<[], UserProfile>,
   'isAdmin' : ActorMethod<[Principal], boolean>,
+  'linkMyAccount' : ActorMethod<[bigint, string], Result_1>,
+  'ownerApprovePaymentRequest' : ActorMethod<[bigint], Result_1>,
+  'ownerGetAllPaymentRequests' : ActorMethod<
+    [],
+    Array<CustomerPaymentRequestView>
+  >,
+  'ownerGetPendingPaymentRequests' : ActorMethod<
+    [],
+    Array<CustomerPaymentRequestView>
+  >,
+  'ownerRejectPaymentRequest' : ActorMethod<[bigint, string], Result_1>,
   'setAdminPrincipal' : ActorMethod<[Principal], undefined>,
+  'submitPaymentRequest' : ActorMethod<[bigint, PaymentType, string], Result>,
   'updateCustomer' : ActorMethod<
     [CustomerId, UpdateCustomerArgs],
     [] | [CustomerView]

@@ -431,3 +431,192 @@ export function useGetDueTodayReminders() {
     staleTime: 60_000,
   });
 }
+
+// ── Customer Portal hooks ──
+
+export function useLinkMyAccount() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      customerId,
+      mobileNumber,
+    }: {
+      customerId: bigint;
+      mobileNumber: string;
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await actor.linkMyAccount(customerId, mobileNumber);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myCustomerProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["myOutstandingBalance"] });
+      queryClient.invalidateQueries({ queryKey: ["myTransactionHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["myPaymentRequests"] });
+    },
+  });
+}
+
+export function useGetMyCustomerProfile() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myCustomerProfile"],
+    queryFn: async () => {
+      if (!actor) return null;
+      const result = await actor.getMyCustomerProfile();
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+export function useGetMyOutstandingBalance() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myOutstandingBalance"],
+    queryFn: async () => {
+      if (!actor) return 0n;
+      const result = await actor.getMyOutstandingBalance();
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+export function useGetMyTransactionHistory() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myTransactionHistory"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await actor.getMyTransactionHistory();
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+export function useSubmitPaymentRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      amount,
+      paymentType,
+      notes,
+    }: {
+      amount: bigint;
+      paymentType: import("@/backend").PaymentType;
+      notes: string;
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await actor.submitPaymentRequest(
+        amount,
+        paymentType,
+        notes,
+      );
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myPaymentRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["myOutstandingBalance"] });
+      queryClient.invalidateQueries({ queryKey: ["ownerPendingRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["ownerAllRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+  });
+}
+
+export function useGetMyPaymentRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myPaymentRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await actor.getMyPaymentRequests();
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+// ── Owner approval hooks ──
+
+export function useOwnerGetPendingPaymentRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["ownerPendingRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.ownerGetPendingPaymentRequests();
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+export function useOwnerGetAllPaymentRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["ownerAllRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.ownerGetAllPaymentRequests();
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+export function useOwnerApprovePaymentRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId: bigint) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await actor.ownerApprovePaymentRequest(requestId);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ownerPendingRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["ownerAllRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+}
+
+export function useOwnerRejectPaymentRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      requestId,
+      reason,
+    }: {
+      requestId: bigint;
+      reason: string;
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await actor.ownerRejectPaymentRequest(requestId, reason);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ownerPendingRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["ownerAllRequests"] });
+    },
+  });
+}

@@ -7,20 +7,14 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export type UdharId = bigint;
 export type Timestamp = bigint;
-export interface UpdateUdharArgs {
-    loanDurationMonths?: bigint;
-    dueDate?: Timestamp;
-    description: string;
-    totalDays?: bigint;
-    dailyAmount?: number;
-    interestRate?: number;
-    notes: string;
-    repaymentMode?: RepaymentMode;
-    repaymentType?: RepaymentType;
-    amount: bigint;
-}
+export type Result_2 = {
+    __kind__: "ok";
+    ok: Array<TransactionEntry>;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface UdharView {
     id: UdharId;
     loanDurationMonths?: bigint;
@@ -45,19 +39,20 @@ export interface UdharView {
     profitAmount?: number;
     totalToCollect?: number;
 }
-export interface UpdateJamaArgs {
-    notes: string;
-    paymentType: PaymentType;
-    amount: bigint;
-}
-export interface DashboardStats {
-    todayCollection: bigint;
-    top5CustomersByBalance: Array<TopCustomer>;
-    totalJama: bigint;
-    totalUdhar: bigint;
-    pendingBalance: bigint;
-    overdueCustomerCount: bigint;
-}
+export type Result_5 = {
+    __kind__: "ok";
+    ok: CustomerView;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_1 = {
+    __kind__: "ok";
+    ok: string;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface CreateJamaArgs {
     notes: string;
     paymentType: PaymentType;
@@ -72,6 +67,13 @@ export interface CreateCustomerArgs {
     address: string;
     notes: string;
 }
+export type Result_4 = {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface JamaView {
     id: JamaId;
     createdAt: Timestamp;
@@ -85,6 +87,67 @@ export interface TopCustomer {
     name: string;
     outstandingBalance: bigint;
 }
+export interface UpdateCustomerArgs {
+    name: string;
+    mobileNumber: string;
+    email?: string;
+    creditLimit: bigint;
+    address: string;
+    notes: string;
+}
+export type UdharId = bigint;
+export interface CustomerPaymentRequestView {
+    id: bigint;
+    status: PaymentRequestStatus;
+    customerPrincipal: Principal;
+    createdAt: Timestamp;
+    rejectionReason?: string;
+    notes: string;
+    paymentType: PaymentType;
+    customerId: CustomerId;
+    amount: bigint;
+    shopOwnerPrincipal: Principal;
+    resolvedAt?: Timestamp;
+}
+export interface UpdateUdharArgs {
+    loanDurationMonths?: bigint;
+    dueDate?: Timestamp;
+    description: string;
+    totalDays?: bigint;
+    dailyAmount?: number;
+    interestRate?: number;
+    notes: string;
+    repaymentMode?: RepaymentMode;
+    repaymentType?: RepaymentType;
+    amount: bigint;
+}
+export interface UpdateJamaArgs {
+    notes: string;
+    paymentType: PaymentType;
+    amount: bigint;
+}
+export interface DashboardStats {
+    todayCollection: bigint;
+    top5CustomersByBalance: Array<TopCustomer>;
+    totalJama: bigint;
+    totalUdhar: bigint;
+    pendingBalance: bigint;
+    overdueCustomerCount: bigint;
+}
+export type Result = {
+    __kind__: "ok";
+    ok: CustomerPaymentRequestView;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_3 = {
+    __kind__: "ok";
+    ok: Array<CustomerPaymentRequestView>;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface TransactionEntry {
     id: bigint;
     kind: TransactionKind;
@@ -101,14 +164,6 @@ export interface AdminStats {
     blockedCount: bigint;
     totalUdhar: bigint;
     totalCustomers: bigint;
-}
-export interface UpdateCustomerArgs {
-    name: string;
-    mobileNumber: string;
-    email?: string;
-    creditLimit: bigint;
-    address: string;
-    notes: string;
 }
 export interface CustomerView {
     id: CustomerId;
@@ -149,6 +204,11 @@ export type JamaId = bigint;
 export enum CustomerStatus {
     active = "active",
     overdue = "overdue"
+}
+export enum PaymentRequestStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum PaymentType {
     cash = "cash",
@@ -194,11 +254,22 @@ export interface backendInterface {
     getDashboardStats(): Promise<DashboardStats>;
     getDueTodayReminders(): Promise<Array<CustomerView>>;
     getJamaByCustomer(customerId: CustomerId): Promise<Array<JamaView>>;
+    getMyCustomerProfile(): Promise<Result_5>;
+    getMyOutstandingBalance(): Promise<Result_4>;
+    getMyPaymentRequests(): Promise<Result_3>;
+    getMyPendingPaymentRequests(): Promise<Result_3>;
+    getMyTransactionHistory(): Promise<Result_2>;
     getTransactionHistory(customerId: CustomerId): Promise<Array<TransactionEntry>>;
     getUdharByCustomer(customerId: CustomerId): Promise<Array<UdharView>>;
     getUserProfile(): Promise<UserProfile>;
     isAdmin(p: Principal): Promise<boolean>;
+    linkMyAccount(customerId: bigint, mobileNumber: string): Promise<Result_1>;
+    ownerApprovePaymentRequest(requestId: bigint): Promise<Result_1>;
+    ownerGetAllPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
+    ownerGetPendingPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
+    ownerRejectPaymentRequest(requestId: bigint, reason: string): Promise<Result_1>;
     setAdminPrincipal(p: Principal): Promise<void>;
+    submitPaymentRequest(amount: bigint, paymentType: PaymentType, notes: string): Promise<Result>;
     updateCustomer(id: CustomerId, args: UpdateCustomerArgs): Promise<CustomerView | null>;
     updateJama(id: JamaId, args: UpdateJamaArgs): Promise<JamaView | null>;
     updateUdhar(id: UdharId, args: UpdateUdharArgs): Promise<UdharView | null>;

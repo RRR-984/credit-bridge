@@ -134,6 +134,30 @@ export const DashboardStats = IDL.Record({
   'pendingBalance' : IDL.Int,
   'overdueCustomerCount' : IDL.Nat,
 });
+export const Result_5 = IDL.Variant({ 'ok' : CustomerView, 'err' : IDL.Text });
+export const Result_4 = IDL.Variant({ 'ok' : IDL.Int, 'err' : IDL.Text });
+export const PaymentRequestStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
+export const CustomerPaymentRequestView = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : PaymentRequestStatus,
+  'customerPrincipal' : IDL.Principal,
+  'createdAt' : Timestamp,
+  'rejectionReason' : IDL.Opt(IDL.Text),
+  'notes' : IDL.Text,
+  'paymentType' : PaymentType,
+  'customerId' : CustomerId,
+  'amount' : IDL.Nat,
+  'shopOwnerPrincipal' : IDL.Principal,
+  'resolvedAt' : IDL.Opt(Timestamp),
+});
+export const Result_3 = IDL.Variant({
+  'ok' : IDL.Vec(CustomerPaymentRequestView),
+  'err' : IDL.Text,
+});
 export const TransactionKind = IDL.Variant({
   'jama' : IDL.Null,
   'udhar' : IDL.Null,
@@ -146,6 +170,10 @@ export const TransactionEntry = IDL.Record({
   'customerId' : CustomerId,
   'amount' : IDL.Nat,
 });
+export const Result_2 = IDL.Variant({
+  'ok' : IDL.Vec(TransactionEntry),
+  'err' : IDL.Text,
+});
 export const UserProfile = IDL.Record({
   'timezone' : IDL.Text,
   'country' : IDL.Text,
@@ -154,6 +182,11 @@ export const UserProfile = IDL.Record({
   'language' : IDL.Text,
   'dateFormat' : IDL.Text,
   'currency' : IDL.Text,
+});
+export const Result_1 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+export const Result = IDL.Variant({
+  'ok' : CustomerPaymentRequestView,
+  'err' : IDL.Text,
 });
 export const UpdateJamaArgs = IDL.Record({
   'notes' : IDL.Text,
@@ -200,6 +233,11 @@ export const idlService = IDL.Service({
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
   'getDueTodayReminders' : IDL.Func([], [IDL.Vec(CustomerView)], ['query']),
   'getJamaByCustomer' : IDL.Func([CustomerId], [IDL.Vec(JamaView)], ['query']),
+  'getMyCustomerProfile' : IDL.Func([], [Result_5], ['query']),
+  'getMyOutstandingBalance' : IDL.Func([], [Result_4], ['query']),
+  'getMyPaymentRequests' : IDL.Func([], [Result_3], ['query']),
+  'getMyPendingPaymentRequests' : IDL.Func([], [Result_3], ['query']),
+  'getMyTransactionHistory' : IDL.Func([], [Result_2], ['query']),
   'getTransactionHistory' : IDL.Func(
       [CustomerId],
       [IDL.Vec(TransactionEntry)],
@@ -212,7 +250,25 @@ export const idlService = IDL.Service({
     ),
   'getUserProfile' : IDL.Func([], [UserProfile], []),
   'isAdmin' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+  'linkMyAccount' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+  'ownerApprovePaymentRequest' : IDL.Func([IDL.Nat], [Result_1], []),
+  'ownerGetAllPaymentRequests' : IDL.Func(
+      [],
+      [IDL.Vec(CustomerPaymentRequestView)],
+      ['query'],
+    ),
+  'ownerGetPendingPaymentRequests' : IDL.Func(
+      [],
+      [IDL.Vec(CustomerPaymentRequestView)],
+      ['query'],
+    ),
+  'ownerRejectPaymentRequest' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
   'setAdminPrincipal' : IDL.Func([IDL.Principal], [], []),
+  'submitPaymentRequest' : IDL.Func(
+      [IDL.Nat, PaymentType, IDL.Text],
+      [Result],
+      [],
+    ),
   'updateCustomer' : IDL.Func(
       [CustomerId, UpdateCustomerArgs],
       [IDL.Opt(CustomerView)],
@@ -356,6 +412,30 @@ export const idlFactory = ({ IDL }) => {
     'pendingBalance' : IDL.Int,
     'overdueCustomerCount' : IDL.Nat,
   });
+  const Result_5 = IDL.Variant({ 'ok' : CustomerView, 'err' : IDL.Text });
+  const Result_4 = IDL.Variant({ 'ok' : IDL.Int, 'err' : IDL.Text });
+  const PaymentRequestStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
+  const CustomerPaymentRequestView = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : PaymentRequestStatus,
+    'customerPrincipal' : IDL.Principal,
+    'createdAt' : Timestamp,
+    'rejectionReason' : IDL.Opt(IDL.Text),
+    'notes' : IDL.Text,
+    'paymentType' : PaymentType,
+    'customerId' : CustomerId,
+    'amount' : IDL.Nat,
+    'shopOwnerPrincipal' : IDL.Principal,
+    'resolvedAt' : IDL.Opt(Timestamp),
+  });
+  const Result_3 = IDL.Variant({
+    'ok' : IDL.Vec(CustomerPaymentRequestView),
+    'err' : IDL.Text,
+  });
   const TransactionKind = IDL.Variant({
     'jama' : IDL.Null,
     'udhar' : IDL.Null,
@@ -368,6 +448,10 @@ export const idlFactory = ({ IDL }) => {
     'customerId' : CustomerId,
     'amount' : IDL.Nat,
   });
+  const Result_2 = IDL.Variant({
+    'ok' : IDL.Vec(TransactionEntry),
+    'err' : IDL.Text,
+  });
   const UserProfile = IDL.Record({
     'timezone' : IDL.Text,
     'country' : IDL.Text,
@@ -376,6 +460,11 @@ export const idlFactory = ({ IDL }) => {
     'language' : IDL.Text,
     'dateFormat' : IDL.Text,
     'currency' : IDL.Text,
+  });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+  const Result = IDL.Variant({
+    'ok' : CustomerPaymentRequestView,
+    'err' : IDL.Text,
   });
   const UpdateJamaArgs = IDL.Record({
     'notes' : IDL.Text,
@@ -430,6 +519,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(JamaView)],
         ['query'],
       ),
+    'getMyCustomerProfile' : IDL.Func([], [Result_5], ['query']),
+    'getMyOutstandingBalance' : IDL.Func([], [Result_4], ['query']),
+    'getMyPaymentRequests' : IDL.Func([], [Result_3], ['query']),
+    'getMyPendingPaymentRequests' : IDL.Func([], [Result_3], ['query']),
+    'getMyTransactionHistory' : IDL.Func([], [Result_2], ['query']),
     'getTransactionHistory' : IDL.Func(
         [CustomerId],
         [IDL.Vec(TransactionEntry)],
@@ -442,7 +536,25 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getUserProfile' : IDL.Func([], [UserProfile], []),
     'isAdmin' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+    'linkMyAccount' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+    'ownerApprovePaymentRequest' : IDL.Func([IDL.Nat], [Result_1], []),
+    'ownerGetAllPaymentRequests' : IDL.Func(
+        [],
+        [IDL.Vec(CustomerPaymentRequestView)],
+        ['query'],
+      ),
+    'ownerGetPendingPaymentRequests' : IDL.Func(
+        [],
+        [IDL.Vec(CustomerPaymentRequestView)],
+        ['query'],
+      ),
+    'ownerRejectPaymentRequest' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
     'setAdminPrincipal' : IDL.Func([IDL.Principal], [], []),
+    'submitPaymentRequest' : IDL.Func(
+        [IDL.Nat, PaymentType, IDL.Text],
+        [Result],
+        [],
+      ),
     'updateCustomer' : IDL.Func(
         [CustomerId, UpdateCustomerArgs],
         [IDL.Opt(CustomerView)],

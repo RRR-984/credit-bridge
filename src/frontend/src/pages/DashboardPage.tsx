@@ -4,14 +4,18 @@ import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppContext } from "@/context/AppContext";
-import { useDashboardStats } from "@/hooks/useBackend";
+import {
+  useDashboardStats,
+  useOwnerGetPendingPaymentRequests,
+} from "@/hooks/useBackend";
 import { formatCurrency } from "@/lib/formatCurrency";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   AlertCircle,
   ArrowDownLeft,
   ArrowUpRight,
   ChevronRight,
+  Clock,
   TrendingUp,
   Users,
   Wallet,
@@ -22,6 +26,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { t, selectedCountry } = useAppContext();
   const currency = selectedCountry.currency;
+  const { data: pendingRequests } = useOwnerGetPendingPaymentRequests();
 
   const fmt = (n: bigint | number) => formatCurrency(Number(n), currency.code);
   const hasPendingBalance = stats && Number(stats.pendingBalance) > 0;
@@ -61,6 +66,30 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
+
+        {/* Pending approvals alert */}
+        {pendingRequests && pendingRequests.length > 0 && (
+          <div
+            data-ocid="dashboard.pending_approvals_alert"
+            className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <Clock size={20} className="text-amber-500 flex-shrink-0" />
+              <span className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                {pendingRequests.length} payment{" "}
+                {pendingRequests.length === 1 ? "request" : "requests"} pending
+                your approval
+              </span>
+            </div>
+            <Link
+              to="/pending-approvals"
+              data-ocid="dashboard.review_pending_link"
+              className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline whitespace-nowrap"
+            >
+              Review Now →
+            </Link>
+          </div>
+        )}
 
         {/* Error state */}
         {isError && (
