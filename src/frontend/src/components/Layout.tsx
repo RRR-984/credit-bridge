@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
@@ -82,7 +83,8 @@ interface LayoutProps {
 }
 
 export function Layout({ children, title }: LayoutProps) {
-  const { clear, loginStatus } = useInternetIdentity();
+  useInternetIdentity();
+  const { logout: authLogout, isAuthenticated } = useAuth();
   const { toggleTheme, isDark } = useTheme();
   const { language, setLanguage, isAdmin } = useAppContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -271,10 +273,12 @@ export function Layout({ children, title }: LayoutProps) {
                 ? "डार्क मोड"
                 : "Dark mode"}
           </button>
-          {loginStatus === "success" && (
+          {isAuthenticated && (
             <button
               type="button"
-              onClick={() => clear()}
+              onClick={async () => {
+                await authLogout();
+              }}
               data-ocid="sidebar.logout_button"
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-destructive/10 hover:text-destructive"
               style={{ color: "oklch(0.45 0.04 245)" }}
@@ -444,11 +448,11 @@ export function Layout({ children, title }: LayoutProps) {
                   </Link>
                 );
               })}
-              {loginStatus === "success" && (
+              {isAuthenticated && (
                 <button
                   type="button"
-                  onClick={() => {
-                    clear();
+                  onClick={async () => {
+                    await authLogout();
                     setMobileMenuOpen(false);
                   }}
                   data-ocid="mobile_menu.logout_button"

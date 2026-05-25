@@ -234,3 +234,115 @@
   box-shadow: 0 0 28px oklch(0.58 0.22 10 / 0.16), 0 4px 10px
     oklch(0.58 0.22 10 / 0.06);
 }
+
+.auth-input {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid oklch(var(--border));
+  background: oklch(var(--secondary) / 0.6);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: oklch(var(--foreground));
+  transition: all 0.2s;
+}
+
+.auth-input::placeholder {
+  color: oklch(var(--muted-foreground));
+}
+
+.auth-input:hover {
+  border-color: oklch(var(--primary) / 0.4);
+}
+
+.auth-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--ring) / 0.4);
+  border-color: oklch(var(--primary) / 0.5);
+}
+
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: linear-gradient(
+    135deg,
+    oklch(0.72 0.18 195),
+    oklch(0.58 0.22 200)
+  );
+  box-shadow: 0 0 20px oklch(0.72 0.18 195 / 0.35), 0 2px 8px
+    oklch(0.72 0.18 195 / 0.2);
+}
+
+.auth-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, oklch(0.68 0.2 195), oklch(0.54 0.24 200));
+  box-shadow: 0 0 28px oklch(0.72 0.18 195 / 0.5), 0 4px 12px
+    oklch(0.72 0.18 195 / 0.3);
+  transform: translateY(-1px);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-link {
+  font-weight: 500;
+  color: oklch(0.6 0.2 195);
+  transition: color 0.2s;
+}
+
+.auth-link:hover {
+  color: oklch(0.5 0.22 200);
+  text-decoration: underline;
+}
+
+.auth-page-bg {
+  background: linear-gradient(
+    135deg,
+    oklch(0.96 0.025 210) 0%,
+    oklch(0.99 0.008 200) 50%,
+    oklch(0.96 0.022 185) 100%
+  );
+}
+
+.dark .auth-page-bg {
+  background: linear-gradient(
+    135deg,
+    oklch(0.11 0.04 250) 0%,
+    oklch(0.14 0.035 245) 50%,
+    oklch(0.11 0.038 255) 100%
+  );
+}
+
+.auth-glow-orb-1 {
+  background: oklch(0.82 0.18 195);
+}
+
+.dark .auth-glow-orb-1 {
+  background: oklch(0.55 0.22 195);
+}
+
+.auth-glow-orb-2 {
+  background: oklch(0.78 0.14 185);
+}
+
+.dark .auth-glow-orb-2 {
+  background: oklch(0.48 0.18 210);
+}
+
+.auth-glow-orb-3 {
+  background: oklch(0.75 0.16 200);
+}
+
+.dark .auth-glow-orb-3 {
+  background: oklch(0.5 0.2 205);
+}

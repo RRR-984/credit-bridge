@@ -1,5 +1,5 @@
+import { useAuth } from "@/context/AuthContext";
 import { useIsAdmin } from "@/hooks/useBackend";
-import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Navigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -8,9 +8,9 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { loginStatus } = useInternetIdentity();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
-  if (loginStatus === "initializing") {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -23,18 +23,23 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (loginStatus !== "success") {
+  if (!isAuthenticated) {
     return <Navigate to="/" />;
+  }
+
+  // Unverified users must verify email before accessing the app
+  if (user && !user.isVerified) {
+    return <Navigate to="/verify-email" />;
   }
 
   return <>{children}</>;
 }
 
 export function AdminRoute({ children }: ProtectedRouteProps) {
-  const { loginStatus } = useInternetIdentity();
-  const { data: isAdmin, isLoading } = useIsAdmin();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
 
-  if (loginStatus === "initializing" || isLoading) {
+  if (authLoading || adminLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -45,7 +50,7 @@ export function AdminRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (loginStatus !== "success") {
+  if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
 

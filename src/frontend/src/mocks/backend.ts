@@ -3,6 +3,7 @@ import {
   CustomerStatus,
   PaymentType,
   TransactionKind,
+  UserRole,
 } from "../backend";
 import { Principal } from "@icp-sdk/core/principal";
 
@@ -388,4 +389,16 @@ export const mockBackend: backendInterface = {
     __kind__: "err",
     err: "Not linked",
   }),
+
+  login: async () => ({ __kind__: "err" as const, err: "Mock: use real backend" }),
+  logout: async () => true,
+  signup: async () => ({ __kind__: "err" as const, err: "Mock: use real backend" }),
+  getMe: async () => null,
+  forgotPassword: async () => true,
+  resetPassword: async () => true,
+  verifyEmail: async () => true,
+  isCallerAdmin: async () => false,
+  getCallerUserRole: async () => UserRole.user,
+  assignCallerUserRole: async (_user: Principal, _role: UserRole) => {},
+  _initializeAccessControl: async () => {},
 };

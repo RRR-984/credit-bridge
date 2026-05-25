@@ -1,3 +1,16 @@
+type UserView = 
+ record {
+   displayName: text;
+   email: text;
+   id: principal;
+   isVerified: bool;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
 type UserProfile = 
  record {
    businessName: text;
@@ -83,6 +96,12 @@ type TopCustomer =
    outstandingBalance: int;
  };
 type Timestamp = int;
+type SignupArgs = 
+ record {
+   displayName: text;
+   email: text;
+   password: text;
+ };
 type Result_5 = 
  variant {
    err: text;
@@ -138,6 +157,11 @@ type PaymentRequestStatus =
    approved;
    pending;
    rejected;
+ };
+type LoginArgs = 
+ record {
+   email: text;
+   password: text;
  };
 type JamaView = 
  record {
@@ -222,6 +246,14 @@ type CreateCustomerArgs =
    name: text;
    notes: text;
  };
+type AuthResult = 
+ variant {
+   err: text;
+   ok: record {
+         token: text;
+         user: UserView;
+       };
+ };
 type AdminStats = 
  record {
    blockedCount: nat;
@@ -232,6 +264,7 @@ type AdminStats =
    totalUdharAmount: float64;
  };
 service : {
+  _initializeAccessControl: () -> ();
   adminBlockCustomer: (id: CustomerId) -> (bool);
   adminDeleteCustomer: (id: CustomerId) -> (bool);
   adminDeleteJama: (id: JamaId) -> (bool);
@@ -244,17 +277,21 @@ service : {
   adminUnblockCustomer: (id: CustomerId) -> (bool);
   adminUpdateCustomer: (id: CustomerId, args: UpdateCustomerArgs) ->
    (opt CustomerView);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
   createCustomer: (args: CreateCustomerArgs) -> (CustomerView);
   createJama: (args: CreateJamaArgs) -> (JamaView);
   createUdhar: (args: CreateUdharArgs) -> (UdharView);
   deleteCustomer: (id: CustomerId) -> (bool);
   deleteJama: (id: JamaId) -> (bool);
   deleteUdhar: (id: UdharId) -> (bool);
+  forgotPassword: (email: text) -> (bool);
+  getCallerUserRole: () -> (UserRole) query;
   getCustomer: (id: CustomerId) -> (opt CustomerView) query;
   getCustomers: () -> (vec CustomerView) query;
   getDashboardStats: () -> (DashboardStats) query;
   getDueTodayReminders: () -> (vec CustomerView) query;
   getJamaByCustomer: (customerId: CustomerId) -> (vec JamaView) query;
+  getMe: (token: text) -> (opt UserView) query;
   getMyCustomerProfile: () -> (Result_5) query;
   getMyOutstandingBalance: () -> (Result_4) query;
   getMyPaymentRequests: () -> (Result_3) query;
@@ -265,13 +302,18 @@ service : {
   getUdharByCustomer: (customerId: CustomerId) -> (vec UdharView) query;
   getUserProfile: () -> (UserProfile);
   isAdmin: (p: principal) -> (bool) query;
+  isCallerAdmin: () -> (bool) query;
   linkMyAccount: (customerId: nat, mobileNumber: text) -> (Result_1);
+  login: (args: LoginArgs) -> (AuthResult);
+  logout: (token: text) -> (bool);
   ownerApprovePaymentRequest: (requestId: nat) -> (Result_1);
   ownerGetAllPaymentRequests: () -> (vec CustomerPaymentRequestView) query;
   ownerGetPendingPaymentRequests: () ->
    (vec CustomerPaymentRequestView) query;
   ownerRejectPaymentRequest: (requestId: nat, reason: text) -> (Result_1);
+  resetPassword: (token: text, newPassword: text) -> (bool);
   setAdminPrincipal: (p: principal) -> ();
+  signup: (args: SignupArgs) -> (AuthResult);
   submitPaymentRequest: (amount: nat, paymentType: PaymentType, notes:
    text) -> (Result);
   updateCustomer: (id: CustomerId, args: UpdateCustomerArgs) ->
@@ -279,4 +321,5 @@ service : {
   updateJama: (id: JamaId, args: UpdateJamaArgs) -> (opt JamaView);
   updateUdhar: (id: UdharId, args: UpdateUdharArgs) -> (opt UdharView);
   updateUserProfile: (profile: UserProfile) -> ();
+  verifyEmail: (verificationToken: text) -> (bool);
 }

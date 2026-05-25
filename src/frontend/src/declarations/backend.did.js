@@ -94,6 +94,11 @@ export const UpdateCustomerArgs = IDL.Record({
   'address' : IDL.Text,
   'notes' : IDL.Text,
 });
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
 export const CreateCustomerArgs = IDL.Record({
   'name' : IDL.Text,
   'mobileNumber' : IDL.Text,
@@ -133,6 +138,12 @@ export const DashboardStats = IDL.Record({
   'totalUdhar' : IDL.Nat,
   'pendingBalance' : IDL.Int,
   'overdueCustomerCount' : IDL.Nat,
+});
+export const UserView = IDL.Record({
+  'id' : IDL.Principal,
+  'displayName' : IDL.Text,
+  'email' : IDL.Text,
+  'isVerified' : IDL.Bool,
 });
 export const Result_5 = IDL.Variant({ 'ok' : CustomerView, 'err' : IDL.Text });
 export const Result_4 = IDL.Variant({ 'ok' : IDL.Int, 'err' : IDL.Text });
@@ -184,6 +195,19 @@ export const UserProfile = IDL.Record({
   'currency' : IDL.Text,
 });
 export const Result_1 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+export const LoginArgs = IDL.Record({
+  'password' : IDL.Text,
+  'email' : IDL.Text,
+});
+export const AuthResult = IDL.Variant({
+  'ok' : IDL.Record({ 'token' : IDL.Text, 'user' : UserView }),
+  'err' : IDL.Text,
+});
+export const SignupArgs = IDL.Record({
+  'displayName' : IDL.Text,
+  'password' : IDL.Text,
+  'email' : IDL.Text,
+});
 export const Result = IDL.Variant({
   'ok' : CustomerPaymentRequestView,
   'err' : IDL.Text,
@@ -207,6 +231,7 @@ export const UpdateUdharArgs = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_initializeAccessControl' : IDL.Func([], [], []),
   'adminBlockCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
   'adminDeleteCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
   'adminDeleteJama' : IDL.Func([JamaId], [IDL.Bool], []),
@@ -222,17 +247,21 @@ export const idlService = IDL.Service({
       [IDL.Opt(CustomerView)],
       [],
     ),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createCustomer' : IDL.Func([CreateCustomerArgs], [CustomerView], []),
   'createJama' : IDL.Func([CreateJamaArgs], [JamaView], []),
   'createUdhar' : IDL.Func([CreateUdharArgs], [UdharView], []),
   'deleteCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
   'deleteJama' : IDL.Func([JamaId], [IDL.Bool], []),
   'deleteUdhar' : IDL.Func([UdharId], [IDL.Bool], []),
+  'forgotPassword' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getCustomer' : IDL.Func([CustomerId], [IDL.Opt(CustomerView)], ['query']),
   'getCustomers' : IDL.Func([], [IDL.Vec(CustomerView)], ['query']),
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
   'getDueTodayReminders' : IDL.Func([], [IDL.Vec(CustomerView)], ['query']),
   'getJamaByCustomer' : IDL.Func([CustomerId], [IDL.Vec(JamaView)], ['query']),
+  'getMe' : IDL.Func([IDL.Text], [IDL.Opt(UserView)], ['query']),
   'getMyCustomerProfile' : IDL.Func([], [Result_5], ['query']),
   'getMyOutstandingBalance' : IDL.Func([], [Result_4], ['query']),
   'getMyPaymentRequests' : IDL.Func([], [Result_3], ['query']),
@@ -250,7 +279,10 @@ export const idlService = IDL.Service({
     ),
   'getUserProfile' : IDL.Func([], [UserProfile], []),
   'isAdmin' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'linkMyAccount' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+  'login' : IDL.Func([LoginArgs], [AuthResult], []),
+  'logout' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'ownerApprovePaymentRequest' : IDL.Func([IDL.Nat], [Result_1], []),
   'ownerGetAllPaymentRequests' : IDL.Func(
       [],
@@ -263,7 +295,9 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'ownerRejectPaymentRequest' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+  'resetPassword' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
   'setAdminPrincipal' : IDL.Func([IDL.Principal], [], []),
+  'signup' : IDL.Func([SignupArgs], [AuthResult], []),
   'submitPaymentRequest' : IDL.Func(
       [IDL.Nat, PaymentType, IDL.Text],
       [Result],
@@ -281,6 +315,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'updateUserProfile' : IDL.Func([UserProfile], [], []),
+  'verifyEmail' : IDL.Func([IDL.Text], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -372,6 +407,11 @@ export const idlFactory = ({ IDL }) => {
     'address' : IDL.Text,
     'notes' : IDL.Text,
   });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
   const CreateCustomerArgs = IDL.Record({
     'name' : IDL.Text,
     'mobileNumber' : IDL.Text,
@@ -411,6 +451,12 @@ export const idlFactory = ({ IDL }) => {
     'totalUdhar' : IDL.Nat,
     'pendingBalance' : IDL.Int,
     'overdueCustomerCount' : IDL.Nat,
+  });
+  const UserView = IDL.Record({
+    'id' : IDL.Principal,
+    'displayName' : IDL.Text,
+    'email' : IDL.Text,
+    'isVerified' : IDL.Bool,
   });
   const Result_5 = IDL.Variant({ 'ok' : CustomerView, 'err' : IDL.Text });
   const Result_4 = IDL.Variant({ 'ok' : IDL.Int, 'err' : IDL.Text });
@@ -462,6 +508,16 @@ export const idlFactory = ({ IDL }) => {
     'currency' : IDL.Text,
   });
   const Result_1 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+  const LoginArgs = IDL.Record({ 'password' : IDL.Text, 'email' : IDL.Text });
+  const AuthResult = IDL.Variant({
+    'ok' : IDL.Record({ 'token' : IDL.Text, 'user' : UserView }),
+    'err' : IDL.Text,
+  });
+  const SignupArgs = IDL.Record({
+    'displayName' : IDL.Text,
+    'password' : IDL.Text,
+    'email' : IDL.Text,
+  });
   const Result = IDL.Variant({
     'ok' : CustomerPaymentRequestView,
     'err' : IDL.Text,
@@ -485,6 +541,7 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    '_initializeAccessControl' : IDL.Func([], [], []),
     'adminBlockCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
     'adminDeleteCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
     'adminDeleteJama' : IDL.Func([JamaId], [IDL.Bool], []),
@@ -504,12 +561,15 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(CustomerView)],
         [],
       ),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createCustomer' : IDL.Func([CreateCustomerArgs], [CustomerView], []),
     'createJama' : IDL.Func([CreateJamaArgs], [JamaView], []),
     'createUdhar' : IDL.Func([CreateUdharArgs], [UdharView], []),
     'deleteCustomer' : IDL.Func([CustomerId], [IDL.Bool], []),
     'deleteJama' : IDL.Func([JamaId], [IDL.Bool], []),
     'deleteUdhar' : IDL.Func([UdharId], [IDL.Bool], []),
+    'forgotPassword' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getCustomer' : IDL.Func([CustomerId], [IDL.Opt(CustomerView)], ['query']),
     'getCustomers' : IDL.Func([], [IDL.Vec(CustomerView)], ['query']),
     'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
@@ -519,6 +579,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(JamaView)],
         ['query'],
       ),
+    'getMe' : IDL.Func([IDL.Text], [IDL.Opt(UserView)], ['query']),
     'getMyCustomerProfile' : IDL.Func([], [Result_5], ['query']),
     'getMyOutstandingBalance' : IDL.Func([], [Result_4], ['query']),
     'getMyPaymentRequests' : IDL.Func([], [Result_3], ['query']),
@@ -536,7 +597,10 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getUserProfile' : IDL.Func([], [UserProfile], []),
     'isAdmin' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'linkMyAccount' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+    'login' : IDL.Func([LoginArgs], [AuthResult], []),
+    'logout' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'ownerApprovePaymentRequest' : IDL.Func([IDL.Nat], [Result_1], []),
     'ownerGetAllPaymentRequests' : IDL.Func(
         [],
@@ -549,7 +613,9 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'ownerRejectPaymentRequest' : IDL.Func([IDL.Nat, IDL.Text], [Result_1], []),
+    'resetPassword' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
     'setAdminPrincipal' : IDL.Func([IDL.Principal], [], []),
+    'signup' : IDL.Func([SignupArgs], [AuthResult], []),
     'submitPaymentRequest' : IDL.Func(
         [IDL.Nat, PaymentType, IDL.Text],
         [Result],
@@ -567,6 +633,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'updateUserProfile' : IDL.Func([UserProfile], [], []),
+    'verifyEmail' : IDL.Func([IDL.Text], [IDL.Bool], []),
   });
 };
 

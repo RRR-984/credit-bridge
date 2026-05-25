@@ -18,6 +18,8 @@ export interface AdminStats {
   'totalUdhar' : bigint,
   'totalCustomers' : bigint,
 }
+export type AuthResult = { 'ok' : { 'token' : string, 'user' : UserView } } |
+  { 'err' : string };
 export interface CreateCustomerArgs {
   'name' : string,
   'mobileNumber' : string,
@@ -91,6 +93,7 @@ export interface JamaView {
   'customerId' : CustomerId,
   'amount' : bigint,
 }
+export interface LoginArgs { 'password' : string, 'email' : string }
 export type PaymentRequestStatus = { 'pending' : null } |
   { 'approved' : null } |
   { 'rejected' : null };
@@ -117,6 +120,11 @@ export type Result_4 = { 'ok' : bigint } |
   { 'err' : string };
 export type Result_5 = { 'ok' : CustomerView } |
   { 'err' : string };
+export interface SignupArgs {
+  'displayName' : string,
+  'password' : string,
+  'email' : string,
+}
 export type Timestamp = bigint;
 export interface TopCustomer {
   'id' : CustomerId,
@@ -192,7 +200,17 @@ export interface UserProfile {
   'dateFormat' : string,
   'currency' : string,
 }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
+export interface UserView {
+  'id' : Principal,
+  'displayName' : string,
+  'email' : string,
+  'isVerified' : boolean,
+}
 export interface _SERVICE {
+  '_initializeAccessControl' : ActorMethod<[], undefined>,
   'adminBlockCustomer' : ActorMethod<[CustomerId], boolean>,
   'adminDeleteCustomer' : ActorMethod<[CustomerId], boolean>,
   'adminDeleteJama' : ActorMethod<[JamaId], boolean>,
@@ -207,17 +225,21 @@ export interface _SERVICE {
     [CustomerId, UpdateCustomerArgs],
     [] | [CustomerView]
   >,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createCustomer' : ActorMethod<[CreateCustomerArgs], CustomerView>,
   'createJama' : ActorMethod<[CreateJamaArgs], JamaView>,
   'createUdhar' : ActorMethod<[CreateUdharArgs], UdharView>,
   'deleteCustomer' : ActorMethod<[CustomerId], boolean>,
   'deleteJama' : ActorMethod<[JamaId], boolean>,
   'deleteUdhar' : ActorMethod<[UdharId], boolean>,
+  'forgotPassword' : ActorMethod<[string], boolean>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCustomer' : ActorMethod<[CustomerId], [] | [CustomerView]>,
   'getCustomers' : ActorMethod<[], Array<CustomerView>>,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
   'getDueTodayReminders' : ActorMethod<[], Array<CustomerView>>,
   'getJamaByCustomer' : ActorMethod<[CustomerId], Array<JamaView>>,
+  'getMe' : ActorMethod<[string], [] | [UserView]>,
   'getMyCustomerProfile' : ActorMethod<[], Result_5>,
   'getMyOutstandingBalance' : ActorMethod<[], Result_4>,
   'getMyPaymentRequests' : ActorMethod<[], Result_3>,
@@ -227,7 +249,10 @@ export interface _SERVICE {
   'getUdharByCustomer' : ActorMethod<[CustomerId], Array<UdharView>>,
   'getUserProfile' : ActorMethod<[], UserProfile>,
   'isAdmin' : ActorMethod<[Principal], boolean>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
   'linkMyAccount' : ActorMethod<[bigint, string], Result_1>,
+  'login' : ActorMethod<[LoginArgs], AuthResult>,
+  'logout' : ActorMethod<[string], boolean>,
   'ownerApprovePaymentRequest' : ActorMethod<[bigint], Result_1>,
   'ownerGetAllPaymentRequests' : ActorMethod<
     [],
@@ -238,7 +263,9 @@ export interface _SERVICE {
     Array<CustomerPaymentRequestView>
   >,
   'ownerRejectPaymentRequest' : ActorMethod<[bigint, string], Result_1>,
+  'resetPassword' : ActorMethod<[string, string], boolean>,
   'setAdminPrincipal' : ActorMethod<[Principal], undefined>,
+  'signup' : ActorMethod<[SignupArgs], AuthResult>,
   'submitPaymentRequest' : ActorMethod<[bigint, PaymentType, string], Result>,
   'updateCustomer' : ActorMethod<
     [CustomerId, UpdateCustomerArgs],
@@ -247,6 +274,7 @@ export interface _SERVICE {
   'updateJama' : ActorMethod<[JamaId, UpdateJamaArgs], [] | [JamaView]>,
   'updateUdhar' : ActorMethod<[UdharId, UpdateUdharArgs], [] | [UdharView]>,
   'updateUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'verifyEmail' : ActorMethod<[string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

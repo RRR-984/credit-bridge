@@ -1,5 +1,6 @@
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { AdminRoute, ProtectedRoute } from "@/components/ProtectedRoute";
+import { AuthProvider } from "@/context/AuthContext";
 import LoginPage from "@/pages/LoginPage";
 import {
   Outlet,
@@ -7,7 +8,6 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
-  redirect,
 } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect, useState } from "react";
 
@@ -26,6 +26,12 @@ const AdminTransactionsPage = lazy(
 const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"));
 const CustomerPortalPage = lazy(() => import("@/pages/CustomerPortalPage"));
 const PendingApprovalsPage = lazy(() => import("@/pages/PendingApprovalsPage"));
+const SignupPage = lazy(() => import("@/pages/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
+const EmailVerificationPage = lazy(
+  () => import("@/pages/EmailVerificationPage"),
+);
 
 const PageLoader = () => (
   <div className="flex min-h-[60vh] items-center justify-center">
@@ -197,8 +203,52 @@ const pendingApprovalsRoute = createRoute({
   ),
 });
 
+const signupRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/signup",
+  component: () => (
+    <Suspense fallback={<PageLoader />}>
+      <SignupPage />
+    </Suspense>
+  ),
+});
+
+const forgotPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/forgot-password",
+  component: () => (
+    <Suspense fallback={<PageLoader />}>
+      <ForgotPasswordPage />
+    </Suspense>
+  ),
+});
+
+const resetPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/reset-password",
+  component: () => (
+    <Suspense fallback={<PageLoader />}>
+      <ResetPasswordPage />
+    </Suspense>
+  ),
+});
+
+const verifyEmailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/verify-email",
+  component: () => (
+    <Suspense fallback={<PageLoader />}>
+      <EmailVerificationPage />
+    </Suspense>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
+  signupRoute,
+  forgotPasswordRoute,
+  resetPasswordRoute,
+  verifyEmailRoute,
   dashboardRoute,
   customersRoute,
   customerDetailRoute,
@@ -231,13 +281,13 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <AuthProvider>
       {isLoading && (
         <div className="fixed inset-0 z-50">
           <LoadingScreen />
         </div>
       )}
       <RouterProvider router={router} />
-    </>
+    </AuthProvider>
   );
 }

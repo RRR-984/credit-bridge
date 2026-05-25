@@ -15,6 +15,16 @@ export type Result_2 = {
     __kind__: "err";
     err: string;
 };
+export interface UserView {
+    id: Principal;
+    displayName: string;
+    email: string;
+    isVerified: boolean;
+}
+export interface LoginArgs {
+    password: string;
+    email: string;
+}
 export interface UdharView {
     id: UdharId;
     loanDurationMonths?: bigint;
@@ -95,6 +105,16 @@ export interface UpdateCustomerArgs {
     address: string;
     notes: string;
 }
+export type AuthResult = {
+    __kind__: "ok";
+    ok: {
+        token: string;
+        user: UserView;
+    };
+} | {
+    __kind__: "err";
+    err: string;
+};
 export type UdharId = bigint;
 export interface CustomerPaymentRequestView {
     id: bigint;
@@ -134,13 +154,11 @@ export interface DashboardStats {
     pendingBalance: bigint;
     overdueCustomerCount: bigint;
 }
-export type Result = {
-    __kind__: "ok";
-    ok: CustomerPaymentRequestView;
-} | {
-    __kind__: "err";
-    err: string;
-};
+export interface SignupArgs {
+    displayName: string;
+    password: string;
+    email: string;
+}
 export type Result_3 = {
     __kind__: "ok";
     ok: Array<CustomerPaymentRequestView>;
@@ -156,6 +174,13 @@ export interface TransactionEntry {
     customerId: CustomerId;
     amount: bigint;
 }
+export type Result = {
+    __kind__: "ok";
+    ok: CustomerPaymentRequestView;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export type CustomerId = bigint;
 export interface AdminStats {
     totalUdharAmount: number;
@@ -231,6 +256,11 @@ export enum TransactionKind {
     jama = "jama",
     udhar = "udhar"
 }
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
+}
 export interface backendInterface {
     adminBlockCustomer(id: CustomerId): Promise<boolean>;
     adminDeleteCustomer(id: CustomerId): Promise<boolean>;
@@ -243,17 +273,21 @@ export interface backendInterface {
     adminGetStats(): Promise<AdminStats>;
     adminUnblockCustomer(id: CustomerId): Promise<boolean>;
     adminUpdateCustomer(id: CustomerId, args: UpdateCustomerArgs): Promise<CustomerView | null>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCustomer(args: CreateCustomerArgs): Promise<CustomerView>;
     createJama(args: CreateJamaArgs): Promise<JamaView>;
     createUdhar(args: CreateUdharArgs): Promise<UdharView>;
     deleteCustomer(id: CustomerId): Promise<boolean>;
     deleteJama(id: JamaId): Promise<boolean>;
     deleteUdhar(id: UdharId): Promise<boolean>;
+    forgotPassword(email: string): Promise<boolean>;
+    getCallerUserRole(): Promise<UserRole>;
     getCustomer(id: CustomerId): Promise<CustomerView | null>;
     getCustomers(): Promise<Array<CustomerView>>;
     getDashboardStats(): Promise<DashboardStats>;
     getDueTodayReminders(): Promise<Array<CustomerView>>;
     getJamaByCustomer(customerId: CustomerId): Promise<Array<JamaView>>;
+    getMe(token: string): Promise<UserView | null>;
     getMyCustomerProfile(): Promise<Result_5>;
     getMyOutstandingBalance(): Promise<Result_4>;
     getMyPaymentRequests(): Promise<Result_3>;
@@ -263,15 +297,21 @@ export interface backendInterface {
     getUdharByCustomer(customerId: CustomerId): Promise<Array<UdharView>>;
     getUserProfile(): Promise<UserProfile>;
     isAdmin(p: Principal): Promise<boolean>;
+    isCallerAdmin(): Promise<boolean>;
     linkMyAccount(customerId: bigint, mobileNumber: string): Promise<Result_1>;
+    login(args: LoginArgs): Promise<AuthResult>;
+    logout(token: string): Promise<boolean>;
     ownerApprovePaymentRequest(requestId: bigint): Promise<Result_1>;
     ownerGetAllPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerGetPendingPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerRejectPaymentRequest(requestId: bigint, reason: string): Promise<Result_1>;
+    resetPassword(token: string, newPassword: string): Promise<boolean>;
     setAdminPrincipal(p: Principal): Promise<void>;
+    signup(args: SignupArgs): Promise<AuthResult>;
     submitPaymentRequest(amount: bigint, paymentType: PaymentType, notes: string): Promise<Result>;
     updateCustomer(id: CustomerId, args: UpdateCustomerArgs): Promise<CustomerView | null>;
     updateJama(id: JamaId, args: UpdateJamaArgs): Promise<JamaView | null>;
     updateUdhar(id: UdharId, args: UpdateUdharArgs): Promise<UdharView | null>;
     updateUserProfile(profile: UserProfile): Promise<void>;
+    verifyEmail(verificationToken: string): Promise<boolean>;
 }

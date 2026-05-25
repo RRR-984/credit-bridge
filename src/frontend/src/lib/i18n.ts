@@ -186,7 +186,31 @@ export type TranslationKey =
   | "pendingApprovalAlert"
   | "viewPendingApprovals"
   | "allRequests"
-  | "rejectionReason";
+  | "rejectionReason"
+  | "signUp"
+  | "createAccount"
+  | "fullName"
+  | "emailField"
+  | "passwordField"
+  | "confirmPassword"
+  | "forgotPasswordLabel"
+  | "resetPasswordTitle"
+  | "sendResetLink"
+  | "verifyEmailTitle"
+  | "resendVerificationLink"
+  | "backToSignIn"
+  | "alreadyHaveAccount"
+  | "dontHaveAccount"
+  | "rememberMe"
+  | "termsOfService"
+  | "privacyPolicy"
+  | "emailSentLabel"
+  | "passwordResetLabel"
+  | "emailVerifiedLabel"
+  | "redirectingToDashboard"
+  | "continueToSignIn"
+  | "invalidResetToken"
+  | "verificationFailed";
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -379,6 +403,30 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     viewPendingApprovals: "View Pending Approvals",
     allRequests: "All Requests",
     rejectionReason: "Rejection Reason",
+    signUp: "Sign Up",
+    createAccount: "Create Account",
+    fullName: "Full Name",
+    emailField: "Email",
+    passwordField: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPasswordLabel: "Forgot Password?",
+    resetPasswordTitle: "Reset Password",
+    sendResetLink: "Send Reset Link",
+    verifyEmailTitle: "Verify Your Email",
+    resendVerificationLink: "Resend Verification Link",
+    backToSignIn: "Back to Sign In",
+    alreadyHaveAccount: "Already have an account?",
+    dontHaveAccount: "Don't have an account?",
+    rememberMe: "Remember me",
+    termsOfService: "Terms of Service",
+    privacyPolicy: "Privacy Policy",
+    emailSentLabel: "Email Sent!",
+    passwordResetLabel: "Password Reset!",
+    emailVerifiedLabel: "Email Verified!",
+    redirectingToDashboard: "Redirecting to your dashboard...",
+    continueToSignIn: "Continue to Sign In",
+    invalidResetToken: "Invalid or missing reset token.",
+    verificationFailed: "Verification link is invalid or expired.",
   },
   hi: {
     totalCredit: "कुल उधार",
@@ -567,6 +615,30 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     viewPendingApprovals: "लंबित अनुमोदन देखें",
     allRequests: "सभी अनुरोध",
     rejectionReason: "अस्वीकृति का कारण",
+    signUp: "साइन अप करें",
+    createAccount: "खाता बनाएं",
+    fullName: "पूरा नाम",
+    emailField: "ईमेल",
+    passwordField: "पासवर्ड",
+    confirmPassword: "पासवर्ड दोहराएं",
+    forgotPasswordLabel: "पासवर्ड भूल गए?",
+    resetPasswordTitle: "पासवर्ड रीसेट करें",
+    sendResetLink: "रीसेट लिंक भेजें",
+    verifyEmailTitle: "ईमेल सत्यापित करें",
+    resendVerificationLink: "सत्यापन लिंक दोबारा भेजें",
+    backToSignIn: "साइन इन पर वापस जाएं",
+    alreadyHaveAccount: "पहले से खाता है?",
+    dontHaveAccount: "खाता नहीं है?",
+    rememberMe: "मुझे याद रखें",
+    termsOfService: "सेवा शर्तें",
+    privacyPolicy: "गोपनीयता नीति",
+    emailSentLabel: "ईमेल भेजा गया!",
+    passwordResetLabel: "पासवर्ड बदल गया!",
+    emailVerifiedLabel: "ईमेल सत्यापित!",
+    redirectingToDashboard: "डैशबोर्ड पर जा रहे हैं...",
+    continueToSignIn: "साइन इन जारी रखें",
+    invalidResetToken: "अमान्य या गायब रीसेट टोकन।",
+    verificationFailed: "सत्यापन लिंक अमान्य या समाप्त हो गया है।",
   },
 };
 

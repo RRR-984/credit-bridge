@@ -37,6 +37,10 @@ type Customer__192853522 =
     owner : Principal;
     var status : CustomerStatus__235234036
   };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
 type JamaId__533445461 = Nat;
 type Jama__237104277 =
   {
@@ -48,13 +52,23 @@ type Jama__237104277 =
     owner : Principal;
     var paymentType : PaymentType__668863806
   };
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
 type PaymentRequestStatus__554684227 = {#approved; #pending; #rejected};
 type PaymentType__668863806 = {#cash; #deposit; #online};
 type RepaymentMode__782063814 =
   {#daily; #endOfTerm; #halfYearly; #monthly; #quarterly};
 type RepaymentType__346275137 = {#fixedDaily; #interestLoan; #simple};
+type ResetToken__1063784642 =
+  {expiresAt : Int; token : Text; userId : Principal};
+type Session__71599859 = {expiresAt : Int; token : Text; userId : Principal};
 type Timestamp__301639476 = Int;
 type UdharId__18967099 = Nat;
 type Udhar__273147258 =
@@ -93,8 +107,43 @@ type UserProfile__446616884 =
     mobileNumber : Text;
     timezone : Text
   };
+type UserRole__1073662873 = {#admin; #guest; #user};
+type User__455962502 =
+  {
+    createdAt : Int;
+    var displayName : Text;
+    email : Text;
+    id : Principal;
+    var isActive : Bool;
+    var isVerified : Bool;
+    var passwordHash : Blob
+  };
 actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
   stable adminState : {var adminPrincipal : ?Principal};
+  stable authResetTokens :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ResetToken__1063784642]];
+      var elementIndex : Nat__490723111
+    };
+  stable authSessions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Session__71599859]];
+      var elementIndex : Nat__490723111
+    };
+  stable authState : {var nextUserId : Nat};
+  stable authUsers :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?User__455962502]];
+      var elementIndex : Nat__490723111
+    };
   stable customerLinks :
     {
       var blockIndex : Nat__490723111;

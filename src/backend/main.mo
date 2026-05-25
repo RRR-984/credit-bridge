@@ -12,6 +12,10 @@ import ProfileApi "mixins/profile-api";
 import AdminApi "mixins/admin-api";
 import CPTypes "types/customer-payment";
 import CustomerPaymentApi "mixins/customer-payment-api";
+import AuthTypes "types/auth";
+import AuthApi "mixins/auth-api";
+import MixinAuthorization "mo:caffeineai-authorization/MixinAuthorization";
+import AccessControl "mo:caffeineai-authorization/access-control";
 
 
 
@@ -34,6 +38,12 @@ actor {
   let paymentRequests = List.empty<CPTypes.CustomerPaymentRequest>();
   let customerLinks = List.empty<CPTypes.CustomerLinkRecord>();
   let paymentState = CPTypes.newState();
+  // Auth state
+  let authUsers       = List.empty<AuthTypes.User>();
+  let authSessions    = List.empty<AuthTypes.Session>();
+  let authResetTokens = List.empty<AuthTypes.ResetToken>();
+  let authState       = AuthTypes.newAuthState();
+  let accessControlState = AccessControl.initState();
 
   // --- Mixin composition ---
   include CustomerApi(customers, udharList, jamaList, state);
@@ -43,5 +53,7 @@ actor {
   include ProfileApi(profileState);
   include AdminApi(adminState, customers, udharList, jamaList);
   include CustomerPaymentApi(customers, udharList, jamaList, paymentRequests, customerLinks, state, paymentState);
+  include AuthApi(authUsers, authSessions, authResetTokens, authState);
+  include MixinAuthorization(accessControlState);
 };
 
