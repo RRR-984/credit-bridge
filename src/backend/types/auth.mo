@@ -1,4 +1,3 @@
-import Debug "mo:core/Debug";
 
 module {
   /// Stored user record (password hash kept opaque as Blob).
@@ -23,6 +22,14 @@ module {
   public type ResetToken = {
     token     : Text;
     userId    : Principal;
+    expiresAt : Int;
+  };
+
+  /// Email-verification one-time token
+  public type VerificationToken = {
+    token     : Text;
+    userId    : Principal;
+    email     : Text;
     expiresAt : Int;
   };
 

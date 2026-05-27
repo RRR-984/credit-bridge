@@ -311,6 +311,7 @@ service : {
   ownerGetPendingPaymentRequests: () ->
    (vec CustomerPaymentRequestView) query;
   ownerRejectPaymentRequest: (requestId: nat, reason: text) -> (Result_1);
+  resendVerificationEmail: (email: text) -> (bool);
   resetPassword: (token: text, newPassword: text) -> (bool);
   setAdminPrincipal: (p: principal) -> ();
   signup: (args: SignupArgs) -> (AuthResult);

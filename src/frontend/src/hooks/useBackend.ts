@@ -3,6 +3,7 @@ import {
   type UserProfile,
   createActor,
 } from "@/backend";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import type {
   CreateCustomerArgs,
   CreateJamaArgs,
@@ -14,11 +15,11 @@ import type { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useActor_() {
-  return useActor(createActor);
+  return useActor(createActorWithHost);
 }
 
 export function useDashboardStats() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: async () => {
@@ -31,7 +32,7 @@ export function useDashboardStats() {
 }
 
 export function useCustomers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
@@ -44,7 +45,7 @@ export function useCustomers() {
 }
 
 export function useCustomer(id: bigint | undefined) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["customer", id?.toString()],
     queryFn: async () => {
@@ -57,7 +58,7 @@ export function useCustomer(id: bigint | undefined) {
 }
 
 export function useTransactionHistory(customerId: bigint | undefined) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["transactions", customerId?.toString()],
     queryFn: async () => {
@@ -70,7 +71,7 @@ export function useTransactionHistory(customerId: bigint | undefined) {
 }
 
 export function useUdharByCustomer(customerId: bigint | undefined) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["udhar", customerId?.toString()],
     queryFn: async () => {
@@ -83,7 +84,7 @@ export function useUdharByCustomer(customerId: bigint | undefined) {
 }
 
 export function useJamaByCustomer(customerId: bigint | undefined) {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["jama", customerId?.toString()],
     queryFn: async () => {
@@ -96,7 +97,7 @@ export function useJamaByCustomer(customerId: bigint | undefined) {
 }
 
 export function useCreateCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (args: CreateCustomerArgs) => {
@@ -113,7 +114,7 @@ export function useCreateCustomer() {
 }
 
 export function useCreateUdhar() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (args: CreateUdharArgs) => {
@@ -134,7 +135,7 @@ export function useCreateUdhar() {
 }
 
 export function useCreateJama() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (args: CreateJamaArgs) => {
@@ -155,7 +156,7 @@ export function useCreateJama() {
 }
 
 export function useUpdateCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -178,7 +179,7 @@ export function useUpdateCustomer() {
 }
 
 export function useDeleteCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -193,7 +194,7 @@ export function useDeleteCustomer() {
 }
 
 export function useGetProfile() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery<UserProfile | null>({
     queryKey: ["userProfile"],
     queryFn: async () => {
@@ -207,7 +208,7 @@ export function useGetProfile() {
 }
 
 export function useUpdateProfile() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (profile: UserProfile) => {
@@ -221,7 +222,7 @@ export function useUpdateProfile() {
 }
 
 export function useAdminGetAdminPrincipal() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["admin", "principal"],
     queryFn: async () => {
@@ -236,7 +237,7 @@ export function useAdminGetAdminPrincipal() {
 // ── Admin hooks ──
 
 export function useIsAdmin() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   const { identity, loginStatus } = useInternetIdentity();
   return useQuery({
     queryKey: ["isAdmin", identity?.getPrincipal().toText()],
@@ -250,7 +251,7 @@ export function useIsAdmin() {
 }
 
 export function useAdminGetAllCustomers() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["admin", "customers"],
     queryFn: async () => {
@@ -263,7 +264,7 @@ export function useAdminGetAllCustomers() {
 }
 
 export function useAdminGetAllUdhar() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["admin", "udhar"],
     queryFn: async () => {
@@ -276,7 +277,7 @@ export function useAdminGetAllUdhar() {
 }
 
 export function useAdminGetAllJama() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["admin", "jama"],
     queryFn: async () => {
@@ -289,7 +290,7 @@ export function useAdminGetAllJama() {
 }
 
 export function useAdminGetStats() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
@@ -302,7 +303,7 @@ export function useAdminGetStats() {
 }
 
 export function useSetAdminPrincipal() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (p: Principal) => {
@@ -316,7 +317,7 @@ export function useSetAdminPrincipal() {
 }
 
 export function useAdminUpdateCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -338,7 +339,7 @@ export function useAdminUpdateCustomer() {
 }
 
 export function useAdminDeleteCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -354,7 +355,7 @@ export function useAdminDeleteCustomer() {
 }
 
 export function useAdminBlockCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -369,7 +370,7 @@ export function useAdminBlockCustomer() {
 }
 
 export function useAdminUnblockCustomer() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -384,7 +385,7 @@ export function useAdminUnblockCustomer() {
 }
 
 export function useAdminDeleteUdhar() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -399,7 +400,7 @@ export function useAdminDeleteUdhar() {
 }
 
 export function useAdminDeleteJama() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
@@ -414,7 +415,7 @@ export function useAdminDeleteJama() {
 }
 export function useGetDueTodayReminders() {
   // getDueTodayReminders is not yet in backend - derive from udhar data locally
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["dueTodayReminders"],
     queryFn: async () => {
@@ -435,7 +436,7 @@ export function useGetDueTodayReminders() {
 // ── Customer Portal hooks ──
 
 export function useLinkMyAccount() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -460,7 +461,7 @@ export function useLinkMyAccount() {
 }
 
 export function useGetMyCustomerProfile() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["myCustomerProfile"],
     queryFn: async () => {
@@ -475,7 +476,7 @@ export function useGetMyCustomerProfile() {
 }
 
 export function useGetMyOutstandingBalance() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["myOutstandingBalance"],
     queryFn: async () => {
@@ -490,7 +491,7 @@ export function useGetMyOutstandingBalance() {
 }
 
 export function useGetMyTransactionHistory() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["myTransactionHistory"],
     queryFn: async () => {
@@ -505,7 +506,7 @@ export function useGetMyTransactionHistory() {
 }
 
 export function useSubmitPaymentRequest() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -537,7 +538,7 @@ export function useSubmitPaymentRequest() {
 }
 
 export function useGetMyPaymentRequests() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["myPaymentRequests"],
     queryFn: async () => {
@@ -554,7 +555,7 @@ export function useGetMyPaymentRequests() {
 // ── Owner approval hooks ──
 
 export function useOwnerGetPendingPaymentRequests() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["ownerPendingRequests"],
     queryFn: async () => {
@@ -567,7 +568,7 @@ export function useOwnerGetPendingPaymentRequests() {
 }
 
 export function useOwnerGetAllPaymentRequests() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   return useQuery({
     queryKey: ["ownerAllRequests"],
     queryFn: async () => {
@@ -580,7 +581,7 @@ export function useOwnerGetAllPaymentRequests() {
 }
 
 export function useOwnerApprovePaymentRequest() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
@@ -599,7 +600,7 @@ export function useOwnerApprovePaymentRequest() {
 }
 
 export function useOwnerRejectPaymentRequest() {
-  const { actor } = useActor(createActor);
+  const { actor } = useActor(createActorWithHost);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({

@@ -39,10 +39,11 @@ actor {
   let customerLinks = List.empty<CPTypes.CustomerLinkRecord>();
   let paymentState = CPTypes.newState();
   // Auth state
-  let authUsers       = List.empty<AuthTypes.User>();
-  let authSessions    = List.empty<AuthTypes.Session>();
-  let authResetTokens = List.empty<AuthTypes.ResetToken>();
-  let authState       = AuthTypes.newAuthState();
+  let authUsers              = List.empty<AuthTypes.User>();
+  let authSessions           = List.empty<AuthTypes.Session>();
+  let authResetTokens        = List.empty<AuthTypes.ResetToken>();
+  let authVerificationTokens = List.empty<AuthTypes.VerificationToken>();
+  let authState              = AuthTypes.newAuthState();
   let accessControlState = AccessControl.initState();
 
   // --- Mixin composition ---
@@ -53,7 +54,7 @@ actor {
   include ProfileApi(profileState);
   include AdminApi(adminState, customers, udharList, jamaList);
   include CustomerPaymentApi(customers, udharList, jamaList, paymentRequests, customerLinks, state, paymentState);
-  include AuthApi(authUsers, authSessions, authResetTokens, authState);
+  include AuthApi(authUsers, authSessions, authResetTokens, authVerificationTokens, authState);
   include MixinAuthorization(accessControlState);
 };
 

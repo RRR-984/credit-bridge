@@ -1,5 +1,6 @@
 import { createActor } from "@/backend";
 import type { AuthResult, SignupArgs, UserView } from "@/backend";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import { useActor } from "@caffeineai/core-infrastructure";
 import type React from "react";
 import {
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUserState] = useState<UserView | null>(null);
   const [token, setTokenState] = useState<string | null>(loadStoredToken);
   const [isLoading, setIsLoading] = useState(true);
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
 
   // Restore session from stored token
   useEffect(() => {

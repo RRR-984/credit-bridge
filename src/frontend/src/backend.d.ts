@@ -305,6 +305,7 @@ export interface backendInterface {
     ownerGetAllPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerGetPendingPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerRejectPaymentRequest(requestId: bigint, reason: string): Promise<Result_1>;
+    resendVerificationEmail(email: string): Promise<boolean>;
     resetPassword(token: string, newPassword: string): Promise<boolean>;
     setAdminPrincipal(p: Principal): Promise<void>;
     signup(args: SignupArgs): Promise<AuthResult>;

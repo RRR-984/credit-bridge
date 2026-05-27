@@ -388,6 +388,7 @@ export interface backendInterface {
     ownerGetAllPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerGetPendingPaymentRequests(): Promise<Array<CustomerPaymentRequestView>>;
     ownerRejectPaymentRequest(requestId: bigint, reason: string): Promise<Result_1>;
+    resendVerificationEmail(email: string): Promise<boolean>;
     resetPassword(token: string, newPassword: string): Promise<boolean>;
     setAdminPrincipal(p: Principal): Promise<void>;
     signup(args: SignupArgs): Promise<AuthResult>;
@@ -1015,6 +1016,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.ownerRejectPaymentRequest(arg0, arg1);
             return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async resendVerificationEmail(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.resendVerificationEmail(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.resendVerificationEmail(arg0);
+            return result;
         }
     }
     async resetPassword(arg0: string, arg1: string): Promise<boolean> {

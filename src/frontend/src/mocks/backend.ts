@@ -397,6 +397,7 @@ export const mockBackend: backendInterface = {
   forgotPassword: async () => true,
   resetPassword: async () => true,
   verifyEmail: async () => true,
+  resendVerificationEmail: async () => true,
   isCallerAdmin: async () => false,
   getCallerUserRole: async () => UserRole.user,
   assignCallerUserRole: async (_user: Principal, _role: UserRole) => {},

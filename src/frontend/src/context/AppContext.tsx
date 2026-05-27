@@ -4,6 +4,7 @@ import {
   DEFAULT_COUNTRY,
   getCountryByCode,
 } from "@/lib/countries";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import { type Language, type TranslationKey, translate } from "@/lib/i18n";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
@@ -56,7 +57,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>(loadInitialLanguage);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   const { identity, loginStatus } = useInternetIdentity();
 
   useEffect(() => {

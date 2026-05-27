@@ -36,6 +36,7 @@ export default function LoginPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -43,6 +44,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [authTimedOut, setAuthTimedOut] = useState(false);
 
   const errors = {
     email:
@@ -59,6 +61,13 @@ export default function LoginPage() {
         : "",
   };
 
+  // 8-second fallback: if auth is still initializing, treat as no session
+  useEffect(() => {
+    if (!authInitializing) return;
+    const t = setTimeout(() => setAuthTimedOut(true), 8000);
+    return () => clearTimeout(t);
+  }, [authInitializing]);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (
@@ -71,6 +80,25 @@ export default function LoginPage() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  // Show spinner only during initial auth restore, unless it timed out
+  if (authInitializing && !authTimedOut) {
+    return (
+      <div
+        className="flex min-h-screen items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.96 0.025 210) 0%, oklch(0.99 0.008 200) 50%, oklch(0.96 0.022 185) 100%)",
+        }}
+      >
+        <Loader2
+          size={32}
+          className="animate-spin"
+          style={{ color: "oklch(0.60 0.2 195)" }}
+        />
+      </div>
+    );
+  }
 
   if (isAuthenticated) return <Navigate to="/dashboard" />;
 
@@ -86,16 +114,40 @@ export default function LoginPage() {
     if (errors.email || errors.password || !email || !password) return;
     setSubmitting(true);
     setServerError("");
-    const err = await login(email.trim(), password);
-    setSubmitting(false);
-    if (err) {
-      setServerError(err);
-    } else {
-      navigate({ to: "/dashboard" });
+    try {
+      // 15-second timeout safeguard
+      const timeoutPromise = new Promise<string>((resolve) =>
+        setTimeout(
+          () =>
+            resolve(
+              isHindi
+                ? "कनेक्शन टाइमआउट। पुनः प्रयास करें।"
+                : "Connection timeout. Please try again.",
+            ),
+          15000,
+        ),
+      );
+      const loginPromise = login(email.trim(), password).then((e) => e ?? "");
+      const result = await Promise.race([loginPromise, timeoutPromise]);
+      if (result) {
+        setServerError(result);
+      } else {
+        navigate({ to: "/dashboard" });
+      }
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : isHindi
+            ? "कुछ गलत हुआ। पुनः प्रयास करें।"
+            : "Something went wrong. Please try again.";
+      setServerError(msg);
+    } finally {
+      setSubmitting(false);
     }
   }
 
-  const isWorking = submitting || authInitializing;
+  const isWorking = submitting;
 
   return (
     <div
@@ -280,6 +332,7 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              {/* Country selector */}
               <div ref={dropdownRef} className="relative">
                 <p className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   {isHindi ? "देश चुनें" : "Select Country"}
@@ -339,6 +392,35 @@ export default function LoginPage() {
                 </AnimatePresence>
               </div>
 
+              {/* Mobile number field */}
+              <div>
+                <label
+                  htmlFor="login-mobile"
+                  className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wide"
+                >
+                  {isHindi ? "मोबाइल नंबर" : "Mobile Number"}
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-[44px] items-center rounded-xl border border-border bg-secondary/60 px-3 text-sm font-medium text-muted-foreground shrink-0">
+                    {selectedC.dialCode}
+                  </span>
+                  <input
+                    id="login-mobile"
+                    type="tel"
+                    placeholder={
+                      isHindi ? "मोबाइल नंबर दर्ज करें" : "Enter your mobile number"
+                    }
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    data-ocid="login.mobile_input"
+                    className="auth-input w-full"
+                    autoComplete="tel"
+                    inputMode="numeric"
+                  />
+                </div>
+              </div>
+
+              {/* Email field */}
               <div>
                 <label
                   htmlFor="login-email"

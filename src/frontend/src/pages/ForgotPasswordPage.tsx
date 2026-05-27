@@ -1,5 +1,6 @@
 import { createActor } from "@/backend";
 import { useAppContext } from "@/context/AppContext";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, CheckCircle2, Loader2, Mail } from "lucide-react";
@@ -7,7 +8,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 
 export default function ForgotPasswordPage() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   const { language } = useAppContext();
   const isHindi = language === "hi";
 

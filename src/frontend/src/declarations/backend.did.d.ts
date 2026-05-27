@@ -263,6 +263,7 @@ export interface _SERVICE {
     Array<CustomerPaymentRequestView>
   >,
   'ownerRejectPaymentRequest' : ActorMethod<[bigint, string], Result_1>,
+  'resendVerificationEmail' : ActorMethod<[string], boolean>,
   'resetPassword' : ActorMethod<[string, string], boolean>,
   'setAdminPrincipal' : ActorMethod<[Principal], undefined>,
   'signup' : ActorMethod<[SignupArgs], AuthResult>,

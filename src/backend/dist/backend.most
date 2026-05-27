@@ -118,6 +118,8 @@ type User__455962502 =
     var isVerified : Bool;
     var passwordHash : Blob
   };
+type VerificationToken__670662267 =
+  {email : Text; expiresAt : Int; token : Text; userId : Principal};
 actor {
   stable accessControlState :
     {
@@ -142,6 +144,12 @@ actor {
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?User__455962502]];
+      var elementIndex : Nat__490723111
+    };
+  stable authVerificationTokens :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?VerificationToken__670662267]];
       var elementIndex : Nat__490723111
     };
   stable customerLinks :

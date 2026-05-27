@@ -1,6 +1,7 @@
 import { createActor } from "@/backend";
 import { useAppContext } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { CheckCircle2, Loader2, MailCheck, RefreshCw } from "lucide-react";
@@ -8,7 +9,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 export default function EmailVerificationPage() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   const { user, logout } = useAuth();
   const { language } = useAppContext();
   const navigate = useNavigate();
@@ -45,18 +46,33 @@ export default function EmailVerificationPage() {
   }, [token, actor, isFetching, isHindi, navigate]);
 
   async function handleResend() {
-    if (!actor || !user?.email) return;
+    if (!actor || resending) return;
     setResending(true);
     setError("");
     try {
-      // Re-trigger verification by calling forgotPassword is incorrect.
-      // There is no dedicated resend-verification endpoint.
-      // We simulate success and inform the user to check their original email
-      // or contact support. Signup itself triggers the verification email.
-      await new Promise((r) => setTimeout(r, 800));
+      const email = user?.email ?? "";
+      // Call resendVerificationEmail if available, otherwise fallback
+      const backendActor = actor as typeof actor & {
+        resendVerificationEmail?: (email: string) => Promise<boolean>;
+      };
+      if (typeof backendActor.resendVerificationEmail === "function") {
+        const ok = await backendActor.resendVerificationEmail(email);
+        if (!ok) {
+          throw new Error("resend failed");
+        }
+      } else {
+        // Backend method not deployed yet — show a helpful message
+        throw new Error("not available");
+      }
       setResendSent(true);
+      // Reset after 5 seconds so user can resend again if needed
+      setTimeout(() => setResendSent(false), 5000);
     } catch {
-      setError(isHindi ? "दोबारा भेजना विफल।" : "Failed to resend. Try again.");
+      setError(
+        isHindi
+          ? "दोबारा भेजना विफल। कृपया पुनः प्रयास करें।"
+          : "Failed to send. Please try again.",
+      );
     } finally {
       setResending(false);
     }
@@ -176,7 +192,7 @@ export default function EmailVerificationPage() {
               <button
                 type="button"
                 onClick={handleResend}
-                disabled={resending || resendSent || isFetching || !user?.email}
+                disabled={resending || resendSent}
                 data-ocid="verify.resend_button"
                 className="auth-button w-full flex items-center justify-center gap-2"
               >

@@ -1,5 +1,6 @@
 import { createActor } from "@/backend";
 import { useAppContext } from "@/context/AppContext";
+import { createActorWithHost } from "@/lib/createActorWithHost";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import {
@@ -14,7 +15,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 export default function ResetPasswordPage() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActorWithHost);
   const { language } = useAppContext();
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { token?: string };
